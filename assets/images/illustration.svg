@@ -1,0 +1,18 @@
+<!-- 
+  Placeholder illustration
+  This should be replaced with the actual hand-drawn illustration of a man in a suit.
+  The illustration should be left-aligned with the content above it.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="200" height="300">
+  <!-- Placeholder: Simple outline of a figure -->
+  <rect x="80" y="20" width="40" height="40" fill="none" stroke="#1C211E" stroke-width="2" rx="20"/>
+  <rect x="70" y="60" width="60" height="100" fill="none" stroke="#1C211E" stroke-width="2"/>
+  <line x1="70" y1="100" x2="50" y2="140" stroke="#1C211E" stroke-width="2"/>
+  <line x1="130" y1="100" x2="150" y2="140" stroke="#1C211E" stroke-width="2"/>
+  <line x1="100" y1="160" x2="100" y2="220" stroke="#1C211E" stroke-width="2"/>
+  <line x1="100" y1="220" x2="80" y2="280" stroke="#1C211E" stroke-width="2"/>
+  <line x1="100" y1="220" x2="120" y2="280" stroke="#1C211E" stroke-width="2"/>
+  <!-- Simple tie -->
+  <rect x="95" y="100" width="10" height="60" fill="#4A7C7E" stroke="#1C211E" stroke-width="1"/>
+  <text x="100" y="250" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1C211E" opacity="0.5">Placeholder</text>
+</svg>

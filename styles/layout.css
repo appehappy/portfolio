@@ -1,0 +1,147 @@
+/**
+ * Layout Styles
+ * 
+ * Illustration positioned bottom-left. Text columns aligned to top of illustration,
+ * with 40px offset from gridlines. Implements the print-inspired, framed page aesthetic.
+ */
+
+/* Page Frame - Dark green border wrapper */
+.page-frame {
+  position: relative;
+  min-height: 100vh;
+  border: var(--border-width) solid var(--color-border);
+  background-color: var(--color-bg-page);
+  /* Exactly 3 evenly spaced gridlines at 25%, 50%, and 75% */
+  background-image: 
+    linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
+    linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
+    linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
+  background-position: 25% 0, 50% 0, 75% 0;
+  background-size: 1px 100%;
+  background-repeat: no-repeat;
+  padding: var(--content-padding);
+}
+
+/* Page Content - Contains title */
+.page-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Display Name - positioned 16px from top of page */
+.display-name {
+  font-family: var(--font-display);
+  font-size: 128px;
+  line-height: 60%;
+  color: #3B230E;
+  text-transform: lowercase;
+  margin: 0;
+  margin-top: 16px;
+  font-weight: normal;
+  letter-spacing: 0;
+}
+
+/* Text columns container - positioned to align with top of illustration */
+.text-columns {
+  position: absolute;
+  top: 50vh; /* Fallback: middle of viewport, will be overridden by JavaScript */
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 2; /* Above illustration */
+  /* Top position will be set by JavaScript to align with illustration top */
+}
+
+/* Text columns: positioned 40px to the right of gridlines */
+.column {
+  max-width: 192px;
+  position: absolute;
+  top: 0;
+  white-space: normal;
+}
+
+.column-bio {
+  /* Gridline at 25% of page-frame width, text starts at 25% + 40px */
+  left: calc(25% + 40px);
+  width: auto;
+}
+
+.column-writing {
+  /* Gridline at 50% of page-frame width, text starts at 50% + 40px */
+  left: calc(50% + 40px);
+  width: auto;
+}
+
+.column-soon {
+  /* Gridline at 75% of page-frame width, text starts at 75% + 40px */
+  left: calc(75% + 40px);
+  width: auto;
+}
+
+.column p {
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.column p:last-child {
+  margin-bottom: 0;
+}
+
+/* Illustration - absolutely positioned at bottom-left of page */
+.illustration {
+  position: absolute;
+  bottom: var(--content-padding);
+  left: var(--content-padding);
+  z-index: 1;
+}
+
+.illustration img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 172px;
+}
+
+/* Align text columns to top of illustration */
+/* We need to calculate where the illustration top is and position text there */
+/* Using JavaScript would be ideal, but we can approximate with CSS */
+/* For now, we'll position text columns relative to a reference point */
+/* The illustration height varies, so we'll need to adjust this */
+
+/* Responsive: collapse to single column on narrow viewports */
+@media (max-width: 768px) {
+  :root {
+    --content-padding: 32px;
+  }
+  
+  .page-frame {
+    border-width: 36px;
+  }
+  
+  .text-columns {
+    flex-direction: column;
+    position: static;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+  }
+  
+  .column-bio,
+  .column-writing,
+  .column-soon {
+    position: static;
+    left: auto;
+    top: auto;
+  }
+  
+  .display-name {
+    font-size: clamp(64px, 16vw, 128px);
+  }
+  
+  .illustration {
+    position: static;
+    margin-top: var(--spacing-lg);
+  }
+  
+  .illustration img {
+    max-width: 100%;
+  }
+}

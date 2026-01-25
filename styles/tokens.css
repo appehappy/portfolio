@@ -1,0 +1,50 @@
+/**
+ * Design Tokens
+ * 
+ * All design values are defined as CSS custom properties to avoid hard-coding
+ * throughout the stylesheet. This ensures consistency and makes future updates easier.
+ */
+
+/* Font Face Declarations */
+@font-face {
+  font-family: "Ruder Plakat Maxi LL";
+  src: url("../assets/fonts/RuderPlakatMaxiLLTT-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Colors */
+  --color-bg-page: #FEF9ED;
+  --color-gridline: #E1DBC6;
+  --color-border: #1C211E;
+  --color-text: #1C211E;
+  --color-link: #28809F; /* Blue-teal for links (Figma) */
+  --color-link-hover: #1e6479;
+
+  /* Spacing - Human-scaled spacing scale */
+  --spacing-xs: 0.5rem;   /* 8px */
+  --spacing-sm: 1rem;     /* 16px */
+  --spacing-md: 2rem;     /* 32px */
+  --spacing-lg: 4rem;     /* 64px */
+  --spacing-xl: 8rem;     /* 128px */
+
+  /* Typography */
+  --font-display: "Ruder Plakat Maxi LL", sans-serif;
+  --font-body: "Gantari", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  
+  /* Typography Sizes */
+  --font-size-display: clamp(3rem, 8vw, 6rem); /* Responsive display size */
+  --font-size-body: 14px;
+  --line-height-body: normal; /* Auto per design */
+  --line-height-display: 1.1;
+  --font-weight-body: 400; /* Medium */
+  --letter-spacing-body: 0;
+
+  /* Layout */
+  --border-width: 40px; /* Thick frame border */
+  --content-max-width: 40rem; /* Maintains left-aligned column */
+  --content-padding: 32px; /* Padding inside page frame */
+  --gridline-spacing: 2rem; /* Spacing between decorative gridlines */
+}

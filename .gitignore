@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Deployment artifacts
+*.zip
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dependencies (if added later)
+node_modules/
