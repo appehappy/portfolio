@@ -99,6 +99,7 @@
   width: auto;
   height: auto;
   max-width: 172px;
+  border: 1px solid #E1DBC6;
 }
 
 /* Align text columns to top of illustration */
@@ -171,15 +172,11 @@
     grid-column: 2 / 3;
   }
   
-  .logo .display-name {
-    font-family: var(--font-display);
-    font-size: 100px;
-    line-height: 0.6;
-    color: #3B230E;
-    text-transform: lowercase;
-    margin: 0;
-    font-weight: normal;
-    letter-spacing: 0;
+  .logo .logo-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
   }
   
   /* Intro text - spans from left gridline to center gridline */
@@ -205,6 +202,7 @@
     width: 100%;
     height: auto;
     display: block;
+    border: 1px solid #E1DBC6;
   }
   
   /* Lower text - spans from left gridline to center gridline */
@@ -225,9 +223,5 @@
 @media (max-width: 480px) {
   .page-frame {
     border-width: 24px;
-  }
-  
-  .logo .display-name {
-    font-size: clamp(60px, 22vw, 100px);
   }
 }
