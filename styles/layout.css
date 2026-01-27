@@ -150,7 +150,8 @@
     
     row-gap: var(--spacing-lg); /* 64px */
     padding: 0; /* critical: grid + gridlines must start at same edge */
-    padding-top: 32px;
+    padding-top: 40px;
+    padding-bottom: 64px;
     min-height: calc(100vh - 48px); /* Account for 24px border on each side */
     position: relative;
     
@@ -208,6 +209,12 @@
   /* Lower text - spans from left gridline to center gridline */
   .lower-text {
     grid-column: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    height: fit-content;
   }
   
   .lower-text p {
