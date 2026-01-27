@@ -68,6 +68,94 @@ No build process or dependencies required. Simply:
    npx http-server
    ```
 
+## Deployment
+
+The site is hosted on **Netlify** and auto-deploys when changes are pushed to GitHub.
+
+- **Live site:** [happyappe.com](https://happyappe.com)
+- **Netlify URL:** [happyappe.netlify.app](https://happyappe.netlify.app)
+- **Repository:** [github.com/appehappy/portfolio](https://github.com/appehappy/portfolio)
+
+### Making Changes
+
+1. **Edit files locally** in Cursor or your preferred editor
+
+2. **Preview locally** (optional):
+   ```bash
+   python -m http.server 8000
+   # Then open http://localhost:8000
+   ```
+
+3. **Commit your changes:**
+   ```bash
+   git add -A
+   git commit -m "Describe what you changed"
+   ```
+
+4. **Push to deploy:**
+   ```bash
+   git push
+   ```
+
+5. **Site updates automatically** in ~30 seconds
+
+### Quick One-Liner
+
+For simple changes, you can combine commit and push:
+
+```bash
+git add -A && git commit -m "Your message" && git push
+```
+
+### DNS & Infrastructure
+
+- **Domain registrar:** GoDaddy
+- **DNS:** Cloudflare (manages DNS records, email routing)
+- **Hosting:** Netlify (static site hosting, CDN, SSL)
+- **Email:** Configured via Cloudflare MX records (unchanged)
+
+## Deployment
+
+The site is hosted on **Netlify** and auto-deploys when changes are pushed to GitHub.
+
+**Live URLs:**
+- Production: [happyappe.com](https://happyappe.com)
+- Netlify: [happyappe.netlify.app](https://happyappe.netlify.app)
+
+**Repository:** [github.com/appehappy/portfolio](https://github.com/appehappy/portfolio)
+
+### Making Changes
+
+1. **Edit files locally** in Cursor or your editor of choice
+
+2. **Preview locally** (optional):
+   ```bash
+   python -m http.server 8000
+   # Then open http://localhost:8000
+   ```
+
+3. **Commit your changes:**
+   ```bash
+   git add -A
+   git commit -m "Brief description of what you changed"
+   ```
+
+4. **Deploy:**
+   ```bash
+   git push
+   ```
+
+5. **Done!** Netlify automatically builds and deploys in ~30 seconds.
+
+### DNS & Hosting Setup
+
+- **Domain registrar:** GoDaddy
+- **DNS:** Cloudflare (manages DNS records, email routing)
+- **Hosting:** Netlify (static site hosting, SSL, CDN)
+- **Email:** Configured via Cloudflare MX records (unchanged)
+
+The Cloudflare DNS has CNAME records pointing `happyappe.com` and `www` to `happyappe.netlify.app` with proxy disabled (DNS only) so Netlify handles SSL.
+
 ## Visual System
 
 ### Colors

@@ -107,41 +107,127 @@
 /* For now, we'll position text columns relative to a reference point */
 /* The illustration height varies, so we'll need to adjust this */
 
-/* Responsive: collapse to single column on narrow viewports */
+/* Mobile grid field - hidden on desktop */
+.grid-field {
+  display: none;
+}
+
+/* Responsive: mobile layout with CSS Grid system */
 @media (max-width: 768px) {
-  :root {
-    --content-padding: 32px;
-  }
-  
   .page-frame {
-    border-width: 36px;
+    /* Border reduces from 40px to 24px on all sides */
+    border-width: 24px;
+    background-color: var(--color-bg-page);
+    padding: 0;
+    min-height: 100vh;
+    position: relative;
+    /* Remove desktop gridlines - grid system handles alignment */
+    background-image: none;
   }
   
-  .text-columns {
-    flex-direction: column;
-    position: static;
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-lg);
-  }
-  
-  .column-bio,
-  .column-writing,
-  .column-soon {
-    position: static;
-    left: auto;
-    top: auto;
-  }
-  
-  .display-name {
-    font-size: clamp(64px, 16vw, 128px);
-  }
-  
+  /* Hide desktop layout elements on mobile */
+  .page-content,
+  .text-columns,
   .illustration {
-    position: static;
-    margin-top: var(--spacing-lg);
+    display: none;
   }
   
-  .illustration img {
-    max-width: 100%;
+  /* Show and configure grid field */
+  .grid-field {
+    display: grid;
+    /* 3 vertical zones defined by gridlines:
+       Column line 1 = left margin edge
+       Column line 2 = LEFT GRIDLINE (40px from left)
+       Column line 3 = CENTER GRIDLINE (middle of two 1fr columns)
+       Column line 4 = RIGHT GRIDLINE (40px from right)
+       Column line 5 = right margin edge */
+    grid-template-columns:
+      40px          /* left margin to first gridline */
+      1fr           /* column A (left gridline to center) */
+      1fr           /* column B (center to right gridline) */
+      40px;         /* right margin */
+    
+    row-gap: var(--spacing-lg); /* 64px */
+    padding: 0; /* critical: grid + gridlines must start at same edge */
+    padding-top: 32px;
+    min-height: calc(100vh - 48px); /* Account for 24px border on each side */
+    position: relative;
+    
+    /* Visual gridlines for alignment rails */
+    background-image: 
+      linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
+      linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
+      linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
+    background-position: 
+      40px 0,              /* Left gridline: 40px from left edge */
+      50% 0,               /* Center gridline: 50% width */
+      calc(100% - 40px) 0; /* Right gridline: 40px from right edge */
+    background-size: 1px 100%;
+    background-repeat: no-repeat;
+  }
+  
+  /* Logo - spans from left gridline to center gridline */
+  .logo {
+    grid-column: 2 / 3;
+  }
+  
+  .logo .display-name {
+    font-family: var(--font-display);
+    font-size: 100px;
+    line-height: 0.6;
+    color: #3B230E;
+    text-transform: lowercase;
+    margin: 0;
+    font-weight: normal;
+    letter-spacing: 0;
+  }
+  
+  /* Intro text - spans from left gridline to center gridline */
+  .intro-text {
+    grid-column: 2 / 3;
+  }
+  
+  .intro-text p {
+    margin: 0 0 var(--spacing-sm) 0;
+    white-space: normal;
+  }
+  
+  .intro-text p:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Illustration - spans from left gridline to right gridline */
+  .illustration-mobile {
+    grid-column: 2 / 4;
+  }
+  
+  .illustration-mobile img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Lower text - spans from left gridline to center gridline */
+  .lower-text {
+    grid-column: 2 / 3;
+  }
+  
+  .lower-text p {
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+  
+  .lower-text p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Smaller mobile: tighter spacing */
+@media (max-width: 480px) {
+  .page-frame {
+    border-width: 24px;
+  }
+  
+  .logo .display-name {
+    font-size: clamp(60px, 22vw, 100px);
   }
 }
