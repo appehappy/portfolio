@@ -53,11 +53,6 @@ a:hover {
   color: var(--color-link-hover);
 }
 
-/* CTA link: underlined (e.g. "Show me." on homepage) */
-a.link-cta {
-  text-decoration: underline;
-}
-
 /* Images */
 img {
   max-width: 100%;
