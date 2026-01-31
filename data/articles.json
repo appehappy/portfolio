@@ -1,0 +1,15 @@
+{
+  "articles": [
+    {
+      "id": "the-reintroduction-of-craft",
+      "title": "The Reintroduction of Craft",
+      "date": "2026-01-31",
+      "dateFormatted": "Jan 31 26",
+      "imageUrl": "https://substackcdn.com/image/fetch/$s_!G7gs!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F81e7e087-5f4d-4358-967d-56bfa55345b3_1780x1782.jpeg",
+      "subhead": "If we limit craft to only mean how well we execute outputs, then AI will eventually outperform us. If craft includes judgment, responsibility, and restraint, then it becomes more important than ever.",
+      "content": "<p>Historically, craft has functioned as a resistance to procedural abstraction. Procedural abstraction impacts systems by separating action from consequence and decision-making from accountability. Some examples:</p><ul><li><p>A factory worker who pulls a lever but never sees the product fail.</p></li><li><p>A bureaucrat enforcing policy without witnessing the harm it causes.</p></li><li><p>A system optimized for KPI’s without human review or intervention.</p></li></ul><p>In each case, craft pushed back against abstraction and distance. Some examples:</p><ul><li><p>The Arts &amp; Crafts Movement</p></li><li><p>Jane Addams &amp; the Settlement House Movement</p></li><li><p>Florence Nightingale &amp; the misuse of metrics</p></li></ul><p>The issue with the AI era is that AI systems maximize procedural abstraction. The machine does a spinny-thing and regurgitates an output. Reintroducing judgment, responsibility, and restraint is how that abstraction gets punctured.</p><p>Judgment knows when to act, responsibility stands behind the outcome (especially if it’s the wrong outcome), and restraint knows when not to act at all. Design decisions should be accountable to human consequences, not just technical or economic optimization.</p><p>This is craft doing its historical job under new conditions. If AI accelerates execution, craft becomes the discipline that decides how it’s exposed and where it should stop.</p>",
+      "source": "substack",
+      "sourceUrl": "https://happyappe.substack.com/p/the-reintroduction-of-craft"
+    }
+  ]
+}

@@ -53,9 +53,38 @@ a:hover {
   color: var(--color-link-hover);
 }
 
+/* CTA link: underlined (e.g. "Show me." on homepage) */
+a.link-cta {
+  text-decoration: underline;
+}
+
 /* Images */
 img {
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+/* Custom scrollbar (Figma: 4px wide, 8px radius, #E1DBC6, 8px from edge) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #E1DBC6 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #E1DBC6;
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #E1DBC6;
 }

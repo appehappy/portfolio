@@ -1,0 +1,258 @@
+/**
+ * Writing Section Layout
+ * 
+ * Left section matches homepage exactly (name + illustration).
+ * 40px between illustration and first gridline.
+ * Center: List/Grid toggle at top, article list aligned to illustration top.
+ * Right: Article content block aligned to right edge (40px from page edge).
+ * Two gridlines: first at illustration-right + 40px, second at 50%.
+ */
+
+/* First gridline: 40px after illustration (content-padding + illustration max-width + 40px) */
+/* Illustration: left 32px, max-width 172px, so right edge at 204px. Gridline at 244px. */
+.writing-page {
+  --writing-gridline-1: calc(var(--content-padding) + 172px + 40px);
+  background-image: 
+    linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
+    linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
+  background-position: var(--writing-gridline-1) 0, 50% 0;
+  background-size: 1px 100%;
+  background-repeat: no-repeat;
+}
+
+.writing-page .display-name a {
+  color: inherit;
+}
+
+/* List/Grid toggle + article list - center column (40px after first gridline) */
+.article-list-container {
+  position: absolute;
+  left: calc(var(--writing-gridline-1) + 40px);
+  top: 0;
+  bottom: 0;
+  width: calc(50% - var(--writing-gridline-1) - 80px); /* To second gridline minus 40px padding */
+  z-index: 2;
+}
+
+/* List/Grid toggle - component at top of middle section; content 40px from first gridline (24px top/bottom, 40px right padding) */
+.view-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 40px 24px 0;
+}
+
+.toggle-btn {
+  font-family: var(--font-article-mono);
+  font-size: 13px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  color: #3B230E;
+}
+
+.toggle-btn + .toggle-btn {
+  margin-left: 16px;
+}
+
+.toggle-btn.active {
+  color: #3B230E;
+}
+
+.toggle-btn:not(.active):not(:disabled) {
+  color: rgba(59, 35, 14, 0.48);
+}
+
+.toggle-btn:disabled {
+  color: rgba(59, 35, 14, 0.3);
+  cursor: not-allowed;
+}
+
+/* Article list - scrollable, aligned to illustration top (top set by JS); custom scrollbar */
+.article-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: scroll;
+  padding: 0 0 24px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #E1DBC6 transparent;
+}
+
+.article-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.article-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.article-list::-webkit-scrollbar-thumb {
+  background: #E1DBC6;
+  border-radius: 8px;
+}
+
+.article-list-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 32px;
+  padding: 4px 0;
+  cursor: pointer;
+  text-decoration: none;
+  color: rgba(59, 35, 14, 0.48);
+}
+
+.article-list-entry:hover,
+.article-list-entry.active {
+  color: #3B230E;
+}
+
+.article-list-entry-title {
+  font-family: var(--font-article-list);
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.article-list-entry-date {
+  font-family: var(--font-article-mono);
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* Article content - right column, aligned to right side of page */
+/* Spans from 40px after second gridline; scrollbar 8px from page edge (Figma) */
+.article-content {
+  position: absolute;
+  left: calc(50% + 40px);
+  right: var(--scrollbar-margin);
+  top: 0;
+  bottom: 0;
+  overflow-y: scroll; /* Force scrollbar so custom styles apply */
+  padding: 24px 40px 40px 0;
+  z-index: 2;
+  scrollbar-width: thin;
+  scrollbar-color: #E1DBC6 transparent;
+}
+
+.article-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.article-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.article-content::-webkit-scrollbar-thumb {
+  background: #E1DBC6;
+  border-radius: 8px;
+}
+
+/* Content block: right-aligned to edge of page; max-width for readability */
+.article-content .article-content-inner {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* Figma: date + title left-aligned, 40px between, IBM Plex Mono */
+.article-header {
+  display: flex;
+  align-items: baseline;
+  gap: 40px;
+  margin-bottom: 24px;
+}
+
+.article-date {
+  font-family: var(--font-article-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(59, 35, 14, 0.48);
+}
+
+.article-title {
+  font-family: var(--font-article-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(59, 35, 14, 0.48);
+}
+
+/* Figma: 40px from image to subhead */
+.article-image-container {
+  margin-bottom: 40px;
+}
+
+/* Subhead / lead paragraph (Substack-style); Figma: 24px from subhead to body */
+.article-subhead {
+  font-family: var(--font-article-marist);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #3B230E;
+  margin: 0 0 24px 0;
+}
+
+.article-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+.article-body {
+  font-family: var(--font-article-marist);
+  font-size: 17px;
+  line-height: 24px;
+  color: #3B230E;
+}
+
+.article-body p {
+  margin: 0 0 1em 0;
+}
+
+.article-body a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+.article-body a:hover {
+  text-decoration: underline;
+}
+
+.article-body p:last-child {
+  margin-bottom: 0;
+}
+
+.article-body ul {
+  margin: 0 0 1em 0;
+  padding-left: 0.5em;
+  list-style: none;
+}
+
+.article-body ul li {
+  position: relative;
+  padding-left: 1em;
+}
+
+.article-body ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  font-size: 0.67em;
+}
+
+/* Empty state */
+.article-content.empty .article-header,
+.article-content.empty .article-image-container,
+.article-content.empty .article-subhead,
+.article-content.empty .article-body {
+  display: none;
+}

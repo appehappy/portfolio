@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing — brendan appeeee</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@500&family=IBM+Plex+Mono:wght@500&display=swap">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/writing.css">
+</head>
+<body>
+  <div class="page-frame writing-page">
+    <!-- Left section: same structure as homepage -->
+    <div class="page-content">
+      <h1 class="display-name">
+        <a href="index.html">brendan<br>appeeee</a>
+      </h1>
+    </div>
+    
+    <div class="illustration">
+      <img src="assets/images/illustration.png" alt="Hand-drawn illustration of a man in a suit">
+    </div>
+    
+    <!-- Center column: List/Grid toggle + article list -->
+    <div class="article-list-container">
+      <div class="view-toggle">
+        <button type="button" class="toggle-btn active" data-view="list">List</button>
+        <button type="button" class="toggle-btn" data-view="grid" disabled>Grid</button>
+      </div>
+      <div class="article-list scrollable">
+        <!-- Populated by JavaScript from data/articles.json -->
+        <div class="article-list-placeholder">Loading...</div>
+      </div>
+    </div>
+    
+    <!-- Right column: Article content -->
+    <div class="article-content">
+      <div class="article-content-inner">
+        <div class="article-header">
+          <span class="article-date"></span>
+          <span class="article-title"></span>
+        </div>
+        <div class="article-image-container">
+          <img src="" alt="" class="article-image">
+        </div>
+        <div class="article-subhead" aria-hidden="true"></div>
+        <div class="article-body"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="scripts/writing.js"></script>
+</body>
+</html>

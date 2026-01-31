@@ -14,6 +14,15 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "ABC Marist";
+  src: url("../assets/fonts/ABCMarist-Medium.woff2") format("woff2"),
+       url("../assets/fonts/ABCMarist-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Colors */
   --color-bg-page: #FEF9ED;
@@ -34,6 +43,12 @@
   --font-display: "Ruder Plakat Maxi LL", sans-serif;
   --font-body: "Gantari", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   
+  /* Writing section typography (content block uses ABC Marist) */
+  --font-article-list: "Red Hat Mono", monospace;
+  --font-article-mono: "IBM Plex Mono", monospace;
+  --font-article-marist: "ABC Marist", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-article-body: "ABC Marist", Georgia, "Times New Roman", serif;
+  
   /* Typography Sizes */
   --font-size-display: clamp(3rem, 8vw, 6rem); /* Responsive display size */
   --font-size-body: 14px;
@@ -47,4 +62,10 @@
   --content-max-width: 40rem; /* Maintains left-aligned column */
   --content-padding: 32px; /* Padding inside page frame */
   --gridline-spacing: 2rem; /* Spacing between decorative gridlines */
+
+  /* Scrollbar (Figma: 4px wide, 8px radius, 8px from edge) */
+  --scrollbar-width: 4px;
+  --scrollbar-radius: 8px;
+  --scrollbar-color: #E1DBC6;
+  --scrollbar-margin: 8px;
 }

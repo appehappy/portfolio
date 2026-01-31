@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <rect width="800" height="450" fill="#5c4a5a"/>
+  <g stroke="rgba(255,255,255,0.6)" stroke-width="1" fill="none">
+    <path d="M100 200 L200 150 L300 200 L200 250 Z"/>
+    <path d="M300 150 L400 100 L500 150 L400 200 Z"/>
+    <path d="M500 200 L600 150 L700 200 L600 250 Z"/>
+    <path d="M150 300 L250 250 L350 300 L250 350 Z"/>
+    <path d="M350 250 L450 200 L550 250 L450 300 Z"/>
+  </g>
+</svg>
