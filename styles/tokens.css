@@ -44,7 +44,7 @@
   --font-body: "Gantari", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   
   /* Writing section typography (content block uses ABC Marist) */
-  --font-article-list: "Red Hat Mono", monospace;
+  --font-article-list: "IBM Plex Mono", monospace;
   --font-article-mono: "IBM Plex Mono", monospace;
   --font-article-marist: "ABC Marist", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-article-body: "ABC Marist", Georgia, "Times New Roman", serif;
