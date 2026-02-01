@@ -7,16 +7,19 @@
 
 /* Page Frame - Dark green border wrapper */
 .page-frame {
+  --line-1: 25%;
+  --line-2: 50%;
+  --line-3: 75%;
   position: relative;
   min-height: 100vh;
   border: var(--border-width) solid var(--color-border);
   background-color: var(--color-bg-page);
-  /* Exactly 3 evenly spaced gridlines at 25%, 50%, and 75% */
+  /* Exactly 3 evenly spaced gridlines; positions animatable for page transition */
   background-image: 
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
-  background-position: 25% 0, 50% 0, 75% 0;
+  background-position: var(--line-1) 0, var(--line-2) 0, var(--line-3) 0;
   background-size: 1px 100%;
   background-repeat: no-repeat;
   padding: var(--content-padding);

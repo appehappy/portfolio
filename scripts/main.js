@@ -38,6 +38,15 @@ function positionTextColumns(illustration, textColumns) {
   textColumns.style.top = illustrationTopRelativeToPaddingBox + 'px';
 }
 
-// Run on load and resize
-window.addEventListener('load', alignTextToIllustration);
+// Expose for page-transition.js to call after swapping to home (realign when DOM/image ready)
+window.alignTextToIllustration = alignTextToIllustration;
+
+// Run on load and resize; also run immediately if document already loaded (e.g. after in-page transition)
+if (document.readyState === 'complete') {
+  alignTextToIllustration();
+  requestAnimationFrame(function() { alignTextToIllustration(); });
+  setTimeout(alignTextToIllustration, 250);
+} else {
+  window.addEventListener('load', alignTextToIllustration);
+}
 window.addEventListener('resize', alignTextToIllustration);

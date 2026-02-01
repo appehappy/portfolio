@@ -8,14 +8,14 @@
  * Two gridlines: first at illustration-right + 40px, second at 50%.
  */
 
-/* First gridline: 40px after illustration (content-padding + illustration max-width + 40px) */
-/* Illustration: left 32px, max-width 172px, so right edge at 204px. Gridline at 244px. */
+/* First gridline: 40px from illustration right edge; second at center (50% or same px as transition end) */
 .writing-page {
   --writing-gridline-1: calc(var(--content-padding) + 172px + 40px);
+  --writing-gridline-2: 50%;
   background-image: 
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
-  background-position: var(--writing-gridline-1) 0, 50% 0;
+  background-position: var(--writing-gridline-1) 0, var(--writing-gridline-2) 0;
   background-size: 1px 100%;
   background-repeat: no-repeat;
 }
@@ -30,7 +30,7 @@
   left: calc(var(--writing-gridline-1) + 40px);
   top: 0;
   bottom: 0;
-  width: calc(50% - var(--writing-gridline-1) - 80px); /* To second gridline minus 40px padding */
+  width: calc(var(--writing-gridline-2) - var(--writing-gridline-1) - 80px); /* To second gridline minus 40px padding */
   z-index: 2;
 }
 
@@ -132,7 +132,7 @@
 /* Spans from 40px after second gridline; scrollbar 8px from page edge (Figma) */
 .article-content {
   position: absolute;
-  left: calc(50% + 40px);
+  left: calc(var(--writing-gridline-2) + 40px);
   right: var(--scrollbar-margin);
   top: 0;
   bottom: 0;
