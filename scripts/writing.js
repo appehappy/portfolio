@@ -21,33 +21,55 @@
       bindEvents();
       alignArticleListToIllustration();
       window.addEventListener('resize', alignArticleListToIllustration);
-      var illustrationImg = document.querySelector('.writing-page .illustration img');
-      if (illustrationImg) {
-        if (illustrationImg.complete) {
-          alignArticleListToIllustration();
+      var illustrationMedia = document.querySelector('.writing-page .illustration img, .writing-page .illustration video');
+      if (illustrationMedia) {
+        if (illustrationMedia.tagName === 'IMG') {
+          if (illustrationMedia.complete) {
+            alignArticleListToIllustration();
+          } else {
+            illustrationMedia.addEventListener('load', alignArticleListToIllustration);
+          }
         } else {
-          illustrationImg.addEventListener('load', alignArticleListToIllustration);
+          if (illustrationMedia.readyState >= 2) {
+            alignArticleListToIllustration();
+          } else {
+            illustrationMedia.addEventListener('loadeddata', alignArticleListToIllustration, { once: true });
+            illustrationMedia.addEventListener('loadedmetadata', alignArticleListToIllustration, { once: true });
+          }
         }
       }
+      initIllustrationHover();
     }).catch(function(err) {
       document.querySelector('.article-list-placeholder').textContent = 'Unable to load articles.';
     });
   }
 
   function alignArticleListToIllustration() {
-    var illustration = document.querySelector('.writing-page .illustration img');
+    var container = document.querySelector('.writing-page .illustration');
     var articleList = document.querySelector('.article-list');
     var pageFrame = document.querySelector('.writing-page');
-    if (!illustration || !articleList || !pageFrame) return;
+    if (!container || !articleList || !pageFrame) return;
 
     var pageRect = pageFrame.getBoundingClientRect();
     var borderWidth = parseInt(getComputedStyle(pageFrame).borderTopWidth) || 0;
-    var illustrationRect = illustration.getBoundingClientRect();
+    var illustrationRect = container.getBoundingClientRect();
 
     /* Align top of first article text to top of illustration box (img including border) */
     var illustrationTopRelative = illustrationRect.top - (pageRect.top + borderWidth);
     var firstEntryPadding = 4; /* article-list-entry padding-top */
     articleList.style.top = (illustrationTopRelative - firstEntryPadding) + 'px';
+  }
+
+  function initIllustrationHover() {
+    document.querySelectorAll('.illustration video').forEach(function (video) {
+      video.addEventListener('mouseenter', function () {
+        video.play().catch(function () {});
+      });
+      video.addEventListener('mouseleave', function () {
+        video.pause();
+        video.currentTime = 0;
+      });
+    });
   }
 
   function loadArticles() {

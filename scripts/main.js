@@ -4,30 +4,54 @@
  * Progressive enhancement for layout alignment.
  */
 
-// Align text columns to top of illustration
+// Align text columns to top of illustration (use container rect so video scale doesn't affect layout)
 function alignTextToIllustration() {
-  const illustration = document.querySelector('.illustration img');
+  const container = document.querySelector('.illustration');
+  const media = document.querySelector('.illustration img, .illustration video');
   const textColumns = document.querySelector('.text-columns');
   
-  if (illustration && textColumns) {
-    // Wait for image to load to get accurate height
-    if (illustration.complete) {
-      positionTextColumns(illustration, textColumns);
+  if (!container || !textColumns) return;
+  function run() {
+    positionTextColumns(container, textColumns);
+  }
+  if (!media) {
+    run();
+    return;
+  }
+  if (media.tagName === 'IMG') {
+    if (media.complete) {
+      run();
     } else {
-      illustration.addEventListener('load', () => {
-        positionTextColumns(illustration, textColumns);
-      });
+      media.addEventListener('load', run);
+    }
+  } else {
+    if (media.readyState >= 2) {
+      run();
+    } else {
+      media.addEventListener('loadeddata', run, { once: true });
+      media.addEventListener('loadedmetadata', run, { once: true });
     }
   }
 }
 
-function positionTextColumns(illustration, textColumns) {
+// Illustration video: play on hover, pause on mouse leave (preloaded for instant play)
+function initIllustrationHover() {
+  document.querySelectorAll('.illustration video').forEach(function (video) {
+    video.addEventListener('mouseenter', function () {
+      video.play().catch(function () {});
+    });
+    video.addEventListener('mouseleave', function () {
+      video.pause();
+      video.currentTime = 0;
+    });
+  });
+}
+
+function positionTextColumns(illustrationContainer, textColumns) {
   const pageFrame = document.querySelector('.page-frame');
-  const illustrationImg = illustration;
-  
-  // Get positions relative to viewport
+  if (!pageFrame || !illustrationContainer) return;
   const pageFrameRect = pageFrame.getBoundingClientRect();
-  const illustrationRect = illustrationImg.getBoundingClientRect();
+  const illustrationRect = illustrationContainer.getBoundingClientRect();
   
   // Calculate illustration top relative to page-frame's padding box
   // page-frame has position: relative, so absolute children are positioned relative to padding box
@@ -46,7 +70,11 @@ if (document.readyState === 'complete') {
   alignTextToIllustration();
   requestAnimationFrame(function() { alignTextToIllustration(); });
   setTimeout(alignTextToIllustration, 250);
+  initIllustrationHover();
 } else {
-  window.addEventListener('load', alignTextToIllustration);
+  window.addEventListener('load', function () {
+    alignTextToIllustration();
+    initIllustrationHover();
+  });
 }
 window.addEventListener('resize', alignTextToIllustration);

@@ -90,19 +90,28 @@
 }
 
 /* Illustration - absolutely positioned at bottom-left of page */
+/* Fixed box (static image aspect 530×1480) so video hover doesn’t resize */
 .illustration {
   position: absolute;
   bottom: var(--content-padding);
   left: var(--content-padding);
   z-index: 1;
+  width: 172px;
+  aspect-ratio: 530 / 1480;
+  border: 1px solid #E1DBC6;
 }
 
-.illustration img {
+/* Fill container so image and video share same dimensions */
+.illustration img,
+.illustration video {
   display: block;
-  width: auto;
-  height: auto;
-  max-width: 172px;
-  border: 1px solid #E1DBC6;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.illustration video {
+  cursor: pointer;
 }
 
 /* Align text columns to top of illustration */

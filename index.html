@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500&display=swap">
   <!-- Ruder Plakat Maxi LL is loaded via @font-face in tokens.css -->
   
+  <!-- Preload illustration idle video for instant hover play -->
+  <link rel="preload" href="assets/videos/illustration-idle.mp4" as="video">
+  
   <!-- Stylesheets -->
   <link rel="stylesheet" href="styles/tokens.css">
   <link rel="stylesheet" href="styles/base.css">
@@ -41,7 +44,9 @@
     </div>
     
     <div class="illustration">
-      <img src="assets/images/illustration.png" alt="Hand-drawn illustration of a man in a suit">
+      <video class="illustration-media" poster="assets/images/illustration.png" muted loop playsinline preload="auto" aria-label="Hand-drawn illustration of a man in a suit">
+        <source src="assets/videos/illustration-idle.mp4" type="video/mp4">
+      </video>
     </div>
     
     <!-- Mobile layout: CSS Grid system -->

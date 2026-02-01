@@ -130,7 +130,8 @@
       }
       return centerPx;
     }).then(function(centerPx) {
-      return fetch(writingUrl).then(function(res) {
+      var writingUrlCacheBust = writingUrl + (writingUrl.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
+      return fetch(writingUrlCacheBust).then(function(res) {
         if (!res.ok) throw new Error('Fetch failed');
         return res.text();
       }).then(function(html) {
@@ -215,7 +216,8 @@
     var fadeTarget = frame.querySelector('.article-list-container, .article-content');
     if (!fadeTarget) fadeTarget = frame;
     waitForTransition(fadeTarget, 'opacity', FADE_DURATION_MS).then(function() {
-      return fetch(homeUrl).then(function(res) {
+      var homeUrlCacheBust = homeUrl + (homeUrl.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
+      return fetch(homeUrlCacheBust).then(function(res) {
         if (!res.ok) throw new Error('Fetch failed');
         return res.text();
       });
