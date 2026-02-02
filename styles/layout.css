@@ -14,15 +14,28 @@
   min-height: 100vh;
   border: var(--border-width) solid var(--color-border);
   background-color: var(--color-bg-page);
-  /* Exactly 3 evenly spaced gridlines; positions animatable for page transition */
+  /* Lines 2 and 3: positions animatable for page transition; line 1 is in ::before so it can fade */
   background-image: 
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
-    linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
-  background-position: var(--line-1) 0, var(--line-2) 0, var(--line-3) 0;
+  background-position: var(--line-2) 0, var(--line-3) 0;
   background-size: 1px 100%;
   background-repeat: no-repeat;
   padding: var(--content-padding);
+}
+
+/* First gridline in its own layer so it can fade out during transition (no movement) */
+.page-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
+  background-position: var(--line-1) 0;
+  background-size: 1px 100%;
+  background-repeat: no-repeat;
+  /* opacity transition overridden in page-transition.css when .page-transition-out */
+  transition: opacity 0.2s ease;
 }
 
 /* Page Content - Contains title */

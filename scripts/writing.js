@@ -9,6 +9,16 @@
   let articles = [];
   let selectedArticleId = null;
 
+  function showContentReady() {
+    var pageFrame = document.querySelector('.writing-page');
+    if (!pageFrame) return;
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        pageFrame.classList.add('writing-content-ready');
+      });
+    });
+  }
+
   function init() {
     loadArticles().then(function() {
       renderArticleList();
@@ -39,8 +49,11 @@
         }
       }
       initIllustrationHover();
+      showContentReady();
     }).catch(function(err) {
-      document.querySelector('.article-list-placeholder').textContent = 'Unable to load articles.';
+      var placeholder = document.querySelector('.article-list-placeholder');
+      if (placeholder) placeholder.textContent = 'Unable to load articles.';
+      showContentReady();
     });
   }
 

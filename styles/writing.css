@@ -8,11 +8,11 @@
  * Two gridlines: first at illustration-right + 40px, second at 50%.
  */
 
-/* First gridline: 40px from illustration right edge; second at center (50% or same px as transition end) */
+/* First gridline: 40px from illustration right edge; center gridline: exact middle of page (50%) */
 .writing-page {
   --writing-gridline-1: calc(var(--content-padding) + 172px + 40px);
   --writing-gridline-2: 50%;
-  background-image: 
+  background-image:
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
     linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
   background-position: var(--writing-gridline-1) 0, var(--writing-gridline-2) 0;
@@ -24,17 +24,36 @@
   color: inherit;
 }
 
-/* List/Grid toggle + article list - center column (40px after first gridline) */
+/* Writing page has only 2 gridlines; hide the home first-line pseudo-element from layout.css */
+.page-frame.writing-page::before {
+  display: none !important;
+  content: none;
+  background: none;
+}
+
+/* Hide writing content until articles are loaded to prevent flash (writing.js adds .writing-content-ready) */
+.writing-page .article-list-container,
+.writing-page .article-content {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.writing-page.writing-content-ready .article-list-container,
+.writing-page.writing-content-ready .article-content {
+  opacity: 1;
+}
+
+/* List/Grid toggle + article list – 40px after first gridline, ends 40px before center gridline */
 .article-list-container {
   position: absolute;
   left: calc(var(--writing-gridline-1) + 40px);
   top: 0;
   bottom: 0;
-  width: calc(var(--writing-gridline-2) - var(--writing-gridline-1) - 80px); /* To second gridline minus 40px padding */
+  width: calc(var(--writing-gridline-2) - var(--writing-gridline-1) - 80px);
   z-index: 2;
 }
 
-/* List/Grid toggle - component at top of middle section; content 40px from first gridline (24px top/bottom, 40px right padding) */
+/* List/Grid toggle - at top of list column */
 .view-toggle {
   position: absolute;
   top: 0;
@@ -128,15 +147,14 @@
   flex-shrink: 0;
 }
 
-/* Article content - right column, aligned to right side of page */
-/* Spans from 40px after second gridline; scrollbar 8px from page edge (Figma) */
+/* Article content – 40px after center gridline; flush to padding edge = 40px from viewport (border) */
 .article-content {
   position: absolute;
   left: calc(var(--writing-gridline-2) + 40px);
-  right: var(--scrollbar-margin);
+  right: 0; /* padding box right edge is 40px from viewport (border); content flush = 40px gap */
   top: 0;
   bottom: 0;
-  overflow-y: scroll; /* Force scrollbar so custom styles apply */
+  overflow-y: scroll;
   padding: 24px 40px 40px 0;
   z-index: 2;
   scrollbar-width: thin;

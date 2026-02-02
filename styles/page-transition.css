@@ -5,11 +5,17 @@
  * Logo and illustration (left) stay static; only main content areas fade.
  */
 
-/* Fade out: home – only text columns and grid (logo + illustration stay visible) */
+/* Fade out: home – text columns, grid, and leftmost gridline (logo + illustration stay visible) */
 .page-frame.page-transition-out .text-columns,
 .page-frame.page-transition-out .grid-field {
   opacity: 0;
   transition: opacity 0.25s ease;
+}
+
+/* Leftmost gridline fades out (no movement); fade quickly so it's gone before lanes animate */
+.page-frame.page-transition-out::before {
+  opacity: 0 !important;
+  transition: opacity 0.2s ease;
 }
 
 /* Fade out: writing – only article list and content (logo + illustration stay visible) */
@@ -20,6 +26,7 @@
 }
 
 /* Fade in: only main content areas (logo + illustration stay at full opacity) */
+/* Writing content (article-list, article-content) is shown only after writing-content-ready in writing.css */
 .page-frame.page-transition-in .text-columns,
 .page-frame.page-transition-in .grid-field,
 .page-frame.page-transition-in .article-list-container,
@@ -29,8 +36,18 @@
 }
 
 .page-frame.page-transition-in.page-transition-in-visible .text-columns,
-.page-frame.page-transition-in.page-transition-in-visible .grid-field,
-.page-frame.page-transition-in.page-transition-in-visible .article-list-container,
-.page-frame.page-transition-in.page-transition-in-visible .article-content {
+.page-frame.page-transition-in.page-transition-in-visible .grid-field {
   opacity: 1;
+}
+
+/* Promote layers during transitions for smoother painting */
+.page-frame.page-transition-out .text-columns,
+.page-frame.page-transition-out .grid-field,
+.page-frame.page-transition-out .article-list-container,
+.page-frame.page-transition-out .article-content,
+.page-frame.page-transition-in .text-columns,
+.page-frame.page-transition-in .grid-field,
+.page-frame.page-transition-in .article-list-container,
+.page-frame.page-transition-in .article-content {
+  will-change: opacity;
 }

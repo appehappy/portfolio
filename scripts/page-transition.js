@@ -67,8 +67,11 @@
       var rect = frame.getBoundingClientRect();
       var w = rect.width;
       var centerPx = w * 0.5;
-      var start = { l1: w * 0.25, l2: w * 0.5, l3: w * 0.75 };
-      var end = { l1: w * -0.05, l2: FIRST_GRIDLINE_PX, l3: centerPx };
+      /* Pin first gridline to 25% in pixels so it never moves (it fades via .page-transition-out::before) */
+      var line1Px = w * 0.25;
+      frame.style.setProperty('--line-1', line1Px + 'px');
+      var start = { l2: w * 0.5, l3: w * 0.75 };
+      var end = { l2: FIRST_GRIDLINE_PX, l3: centerPx };
       var startTime = null;
       function tick(timestamp) {
         if (startTime === null) startTime = timestamp;
@@ -76,7 +79,6 @@
         var t = Math.min(elapsed / durationMs, 1);
         var eased = easeInOutCubic(t);
         if (t >= 1) {
-          frame.style.setProperty('--line-1', '-5%');
           frame.style.setProperty('--line-2', FIRST_GRIDLINE_PX + 'px');
           frame.style.setProperty('--line-3', centerPx + 'px');
           requestAnimationFrame(function() {
@@ -86,10 +88,8 @@
           });
           return;
         }
-        var l1 = start.l1 + (end.l1 - start.l1) * eased;
         var l2 = start.l2 + (end.l2 - start.l2) * eased;
         var l3 = start.l3 + (end.l3 - start.l3) * eased;
-        frame.style.setProperty('--line-1', l1 + 'px');
         frame.style.setProperty('--line-2', l2 + 'px');
         frame.style.setProperty('--line-3', l3 + 'px');
         requestAnimationFrame(tick);
