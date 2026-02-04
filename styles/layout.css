@@ -38,10 +38,10 @@
   transition: opacity 0.2s ease;
 }
 
-/* Page Content - Contains title */
+/* Page Content - Contains title/logo; above illustration when window is short */
 .page-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 /* Display Name - positioned 16px from top of page */
@@ -108,7 +108,7 @@
   position: absolute;
   bottom: var(--content-padding);
   left: var(--content-padding);
-  z-index: 1;
+  z-index: 0;
   width: 172px;
   aspect-ratio: 530 / 1480;
   border: 1px solid #E1DBC6;
