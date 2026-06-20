@@ -25,12 +25,12 @@
 
 :root {
   /* Colors */
-  --color-bg-page: #FEF9ED;
-  --color-gridline: #E1DBC6;
-  --color-border: #1C211E;
-  --color-text: #1C211E;
-  --color-link: #28809F; /* Blue-teal for links (Figma) */
-  --color-link-hover: #1e6479;
+  --color-bg-page: #faf4f0;
+  --color-gridline: #f5e9e0;
+  --color-border: #1c110a;
+  --color-text: #1c110a;
+  --color-link: #628c8c; /* Muted teal-green for links (Figma) */
+  --color-link-hover: #4f7373;
 
   /* Spacing - Human-scaled spacing scale */
   --spacing-xs: 0.5rem;   /* 8px */
@@ -58,14 +58,14 @@
   --letter-spacing-body: 0;
 
   /* Layout */
-  --border-width: 40px; /* Thick frame border */
+  --border-width: 32px; /* Thick frame border */
   --content-max-width: 40rem; /* Maintains left-aligned column */
-  --content-padding: 32px; /* Padding inside page frame */
+  --content-padding: 48px; /* Padding inside page frame */
   --gridline-spacing: 2rem; /* Spacing between decorative gridlines */
 
   /* Scrollbar (Figma: 4px wide, 8px radius, 8px from edge) */
   --scrollbar-width: 4px;
   --scrollbar-radius: 8px;
-  --scrollbar-color: #E1DBC6;
+  --scrollbar-color: #f5e9e0;
   --scrollbar-margin: 8px;
 }

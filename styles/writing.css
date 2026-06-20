@@ -71,7 +71,7 @@
   cursor: pointer;
   padding: 0;
   margin: 0;
-  color: #3B230E;
+  color: #1c110a;
 }
 
 .toggle-btn + .toggle-btn {
@@ -79,15 +79,15 @@
 }
 
 .toggle-btn.active {
-  color: #3B230E;
+  color: #1c110a;
 }
 
 .toggle-btn:not(.active):not(:disabled) {
-  color: rgba(59, 35, 14, 0.48);
+  color: rgba(28, 17, 10, 0.48);
 }
 
 .toggle-btn:disabled {
-  color: rgba(59, 35, 14, 0.3);
+  color: rgba(28, 17, 10, 0.3);
   cursor: not-allowed;
 }
 
@@ -100,7 +100,7 @@
   overflow-y: scroll;
   padding: 0 0 24px 0;
   scrollbar-width: thin;
-  scrollbar-color: #E1DBC6 transparent;
+  scrollbar-color: #f5e9e0 transparent;
 }
 
 .article-list::-webkit-scrollbar {
@@ -112,7 +112,7 @@
 }
 
 .article-list::-webkit-scrollbar-thumb {
-  background: #E1DBC6;
+  background: #f5e9e0;
   border-radius: 8px;
 }
 
@@ -124,12 +124,12 @@
   padding: 4px 0;
   cursor: pointer;
   text-decoration: none;
-  color: rgba(59, 35, 14, 0.48);
+  color: rgba(28, 17, 10, 0.48);
 }
 
 .article-list-entry:hover,
 .article-list-entry.active {
-  color: #3B230E;
+  color: #1c110a;
 }
 
 .article-list-entry-title {
@@ -158,7 +158,7 @@
   padding: 24px 40px 40px 0;
   z-index: 2;
   scrollbar-width: thin;
-  scrollbar-color: #E1DBC6 transparent;
+  scrollbar-color: #f5e9e0 transparent;
 }
 
 .article-content::-webkit-scrollbar {
@@ -170,7 +170,7 @@
 }
 
 .article-content::-webkit-scrollbar-thumb {
-  background: #E1DBC6;
+  background: #f5e9e0;
   border-radius: 8px;
 }
 
@@ -193,14 +193,14 @@
   font-family: var(--font-article-mono);
   font-size: 13px;
   font-weight: 500;
-  color: rgba(59, 35, 14, 0.48);
+  color: rgba(28, 17, 10, 0.48);
 }
 
 .article-title {
   font-family: var(--font-article-mono);
   font-size: 13px;
   font-weight: 500;
-  color: rgba(59, 35, 14, 0.48);
+  color: rgba(28, 17, 10, 0.48);
 }
 
 /* Figma: 40px from image to subhead */
@@ -214,7 +214,7 @@
   font-size: 24px;
   font-weight: 500;
   line-height: 1.4;
-  color: #3B230E;
+  color: #1c110a;
   margin: 0 0 24px 0;
 }
 
@@ -229,7 +229,7 @@
   font-family: var(--font-article-marist);
   font-size: 17px;
   line-height: 24px;
-  color: #3B230E;
+  color: #1c110a;
 }
 
 .article-body p {
