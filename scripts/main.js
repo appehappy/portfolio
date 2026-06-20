@@ -34,19 +34,6 @@ function alignTextToIllustration() {
   }
 }
 
-// Illustration video: play on hover, pause on mouse leave (preloaded for instant play)
-function initIllustrationHover() {
-  document.querySelectorAll('.illustration video').forEach(function (video) {
-    video.addEventListener('mouseenter', function () {
-      video.play().catch(function () {});
-    });
-    video.addEventListener('mouseleave', function () {
-      video.pause();
-      video.currentTime = 0;
-    });
-  });
-}
-
 function positionTextColumns(illustrationContainer, textColumns) {
   const pageFrame = document.querySelector('.page-frame');
   if (!pageFrame || !illustrationContainer) return;
@@ -70,11 +57,9 @@ if (document.readyState === 'complete') {
   alignTextToIllustration();
   requestAnimationFrame(function() { alignTextToIllustration(); });
   setTimeout(alignTextToIllustration, 250);
-  initIllustrationHover();
 } else {
   window.addEventListener('load', function () {
     alignTextToIllustration();
-    initIllustrationHover();
   });
 }
 window.addEventListener('resize', alignTextToIllustration);

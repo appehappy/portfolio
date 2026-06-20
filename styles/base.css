@@ -60,10 +60,10 @@ img {
   display: block;
 }
 
-/* Custom scrollbar (Figma: 4px wide, 8px radius, #E1DBC6, 8px from edge) */
+/* Custom scrollbar (Figma: 4px wide, 8px radius, #f5e9e0, 8px from edge) */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #E1DBC6 transparent;
+  scrollbar-color: #f5e9e0 transparent;
 }
 
 *::-webkit-scrollbar {
@@ -76,10 +76,10 @@ img {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #E1DBC6;
+  background: #f5e9e0;
   border-radius: 8px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #E1DBC6;
+  background: #f5e9e0;
 }
