@@ -74,6 +74,8 @@
   position: absolute;
   top: 0;
   white-space: normal;
+  /* Figma body text: 14px / 20px line-height */
+  line-height: 20px;
 }
 
 .column-bio {
@@ -95,11 +97,25 @@
 }
 
 .column p {
-  margin: 0 0 var(--spacing-sm) 0;
+  /* Figma: 20px between paragraphs (one blank 20px line) */
+  margin: 0 0 20px 0;
 }
 
 .column p:last-child {
   margin-bottom: 0;
+}
+
+/* "write & draw" archive link with trailing arrow-up-right icon */
+.archive-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.archive-link .arrow-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 /* Illustration - absolutely positioned at bottom-left of page */
@@ -217,7 +233,7 @@
   }
   
   .intro-text p {
-    margin: 0 0 var(--spacing-sm) 0;
+    margin: 0 0 20px 0;
     white-space: normal;
   }
   
@@ -244,12 +260,12 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 16px;
+    gap: 20px;
     height: fit-content;
   }
-  
+
   .lower-text p {
-    margin: 0 0 var(--spacing-sm) 0;
+    margin: 0 0 20px 0;
   }
   
   .lower-text p:last-child {

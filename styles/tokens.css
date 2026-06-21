@@ -29,8 +29,8 @@
   --color-gridline: #f5e9e0;
   --color-border: #1c110a;
   --color-text: #1c110a;
-  --color-link: #628c8c; /* Muted teal-green for links (Figma) */
-  --color-link-hover: #4f7373;
+  --color-link: #738c7a; /* Muted sage-green for links (Figma) */
+  --color-link-hover: #5e7364;
 
   /* Spacing - Human-scaled spacing scale */
   --spacing-xs: 0.5rem;   /* 8px */
