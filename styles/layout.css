@@ -148,11 +148,20 @@
   object-fit: contain;
 }
 
+/* Forward + reverse video layers stack in the same box; JS toggles opacity
+   between them at matched frames (instant, seamless). */
 .illustration video {
+  position: absolute;
+  inset: 0;
   cursor: pointer;
   /* White video background multiplies down to the box's page-color background,
      guaranteeing the illustration never shows a background lighter than the page */
   mix-blend-mode: multiply;
+}
+
+/* Reverse (rewind) layer is hidden until the cursor leaves */
+.illustration-rev {
+  opacity: 0;
 }
 
 /* Align text columns to top of illustration */

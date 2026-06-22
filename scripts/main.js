@@ -34,15 +34,55 @@ function alignTextToIllustration() {
   }
 }
 
-// Illustration video: play on hover, pause on mouse leave (preloaded for instant play)
+// Illustration video: play forward on hover; on leave, rewind via a reversed
+// clip back to the start pose, then rest there. Forward time t and reverse time
+// (D - t) show the same frame, so swaps between the two layers are instant and
+// seamless (no crossfade, which would double the multiply-blended line art).
 function initIllustrationHover() {
-  document.querySelectorAll('.illustration video').forEach(function (video) {
-    video.addEventListener('mouseenter', function () {
-      video.play().catch(function () {});
+  var REWIND_RATE = 1.75; // how fast the rewind plays back (tunable)
+
+  document.querySelectorAll('.illustration').forEach(function (box) {
+    var fwd = box.querySelector('.illustration-fwd');
+    var rev = box.querySelector('.illustration-rev');
+    if (!fwd || !rev) return;
+
+    function duration() {
+      return (fwd.duration && isFinite(fwd.duration)) ? fwd.duration : 5.04;
+    }
+    function clamp(t) {
+      return Math.min(Math.max(t, 0), duration());
+    }
+
+    function playForward() {
+      var D = duration();
+      // If a rewind was in progress (or completed), continue forward from the
+      // mirrored position so the figure picks up exactly where it left off.
+      if (!rev.paused || rev.currentTime > 0) {
+        fwd.currentTime = clamp(D - rev.currentTime);
+      }
+      rev.pause();
+      rev.style.opacity = '0';
+      fwd.style.opacity = '1';
+      fwd.play().catch(function () {});
+    }
+
+    function playReverse() {
+      var D = duration();
+      fwd.pause();
+      rev.currentTime = clamp(D - fwd.currentTime);
+      rev.playbackRate = REWIND_RATE;
+      fwd.style.opacity = '0';
+      rev.style.opacity = '1';
+      rev.play().catch(function () {});
+    }
+
+    // Rewind finished: rest on the final frame (== forward's frame 0 / start pose).
+    rev.addEventListener('ended', function () {
+      rev.pause();
     });
-    video.addEventListener('mouseleave', function () {
-      video.pause();
-    });
+
+    box.addEventListener('mouseenter', playForward);
+    box.addEventListener('mouseleave', playReverse);
   });
 }
 
