@@ -46,6 +46,8 @@ function initIllustrationHover() {
     var rev = box.querySelector('.illustration-rev');
     if (!fwd || !rev) return;
 
+    var token = 0; // guards against stale reveals when hover toggles quickly
+
     function duration() {
       return (fwd.duration && isFinite(fwd.duration)) ? fwd.duration : 5.04;
     }
@@ -53,27 +55,45 @@ function initIllustrationHover() {
       return Math.min(Math.max(t, 0), duration());
     }
 
+    // Reveal `to` (seeked to targetTime) and hide `from`, but only once `to` has
+    // actually decoded the target frame — otherwise it flashes a stale frame
+    // during the seek. `from` stays visible (frozen) until then; since
+    // forward(t) and reverse(D - t) are the same frame, the swap is invisible.
+    function swapTo(to, from, targetTime, onReady) {
+      var my = ++token;
+      from.pause();
+      var done = false;
+      function reveal() {
+        if (done) return;
+        done = true;
+        to.removeEventListener('seeked', onSeeked);
+        clearTimeout(fallback);
+        if (my !== token) return; // superseded by a newer interaction
+        to.style.opacity = '1';
+        from.style.opacity = '0';
+        onReady();
+      }
+      function onSeeked() { requestAnimationFrame(reveal); }
+      var fallback = setTimeout(reveal, 150); // safety net if 'seeked' never fires
+      if (Math.abs(to.currentTime - targetTime) < 0.02) {
+        requestAnimationFrame(reveal); // already on the frame
+      } else {
+        to.addEventListener('seeked', onSeeked);
+        to.currentTime = targetTime;
+      }
+    }
+
     function playForward() {
       var D = duration();
-      // If a rewind was in progress (or completed), continue forward from the
-      // mirrored position so the figure picks up exactly where it left off.
-      if (!rev.paused || rev.currentTime > 0) {
-        fwd.currentTime = clamp(D - rev.currentTime);
-      }
-      rev.pause();
-      rev.style.opacity = '0';
-      fwd.style.opacity = '1';
-      fwd.play().catch(function () {});
+      // If reverse is the visible layer, pick up forward from the mirrored time.
+      var target = (rev.style.opacity === '1') ? clamp(D - rev.currentTime) : fwd.currentTime;
+      swapTo(fwd, rev, target, function () { fwd.play().catch(function () {}); });
     }
 
     function playReverse() {
       var D = duration();
-      fwd.pause();
-      rev.currentTime = clamp(D - fwd.currentTime);
       rev.playbackRate = REWIND_RATE;
-      fwd.style.opacity = '0';
-      rev.style.opacity = '1';
-      rev.play().catch(function () {});
+      swapTo(rev, fwd, clamp(D - fwd.currentTime), function () { rev.play().catch(function () {}); });
     }
 
     // Rewind finished: rest on the final frame (== forward's frame 0 / start pose).
