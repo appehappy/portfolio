@@ -195,10 +195,10 @@
       1fr           /* column B (center to right gridline) */
       40px;         /* right margin */
     
-    row-gap: var(--spacing-lg); /* 64px */
+    row-gap: 0; /* per-block gaps set via margin-top (Figma rhythm is uneven) */
     padding: 0; /* critical: grid + gridlines must start at same edge */
     padding-top: 40px;
-    padding-bottom: 64px;
+    padding-bottom: 40px;
     min-height: calc(100vh - 48px); /* Account for 24px border on each side */
     position: relative;
     
@@ -215,21 +215,23 @@
     background-repeat: no-repeat;
   }
   
-  /* Logo - spans from left gridline to center gridline */
+  /* Logo - large, spans full content width (left gridline to right gridline), top */
   .logo {
-    grid-column: 2 / 3;
+    grid-column: 2 / 4;
+    grid-row: 1;
   }
-  
+
   .logo .logo-svg {
     display: block;
     width: 100%;
     height: auto;
     max-width: 100%;
   }
-  
-  /* Intro text - spans from left gridline to center gridline */
+
+  /* Intro text (bio) - right column (center gridline to right gridline), under logo */
   .intro-text {
-    grid-column: 2 / 3;
+    grid-column: 3 / 4;
+    grid-row: 2;
   }
   
   .intro-text p {
@@ -241,21 +243,28 @@
     margin-bottom: 0;
   }
   
-  /* Illustration - spans from left gridline to right gridline */
+  /* Illustration - left column (left gridline to center gridline) */
   .illustration-mobile {
-    grid-column: 2 / 4;
+    grid-column: 2 / 3;
+    grid-row: 3;
+    margin-top: 32px; /* Figma gap: bio bottom -> illustration top */
   }
-  
+
+  /* Left edge sits on the left gridline (which serves as the left border),
+     so only top/right/bottom are drawn (Figma) */
   .illustration-mobile img {
     width: 100%;
     height: auto;
     display: block;
     border: 1px solid var(--color-gridline);
+    border-left: none;
   }
-  
-  /* Lower text - spans from left gridline to center gridline */
+
+  /* Lower text - right column (center gridline to right gridline), bottom */
   .lower-text {
-    grid-column: 2 / 3;
+    grid-column: 3 / 4;
+    grid-row: 4;
+    margin-top: 24px; /* Figma gap: illustration bottom -> "write & draw" */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -265,11 +274,7 @@
   }
 
   .lower-text p {
-    margin: 0 0 20px 0;
-  }
-  
-  .lower-text p:last-child {
-    margin-bottom: 0;
+    margin: 0;
   }
 }
 
