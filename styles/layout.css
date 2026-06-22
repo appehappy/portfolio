@@ -164,6 +164,40 @@
   opacity: 0;
 }
 
+/* Peek illustration — a masked square in the top-right that expands on hover.
+   Anchored to its top-right corner (12px from the canvas edges). The image is
+   fixed at the expanded size and the container clips it, so growing the box
+   reveals the illustration out from the top-right corner. Expanded size = the
+   rightmost column (25% of the cream) minus 12px of padding on each side. */
+.peek {
+  --peek-expanded: calc((100vw - var(--border-width) * 2) / 4 - 24px);
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  z-index: 3;
+  cursor: pointer;
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.peek:hover {
+  width: var(--peek-expanded);
+  height: var(--peek-expanded);
+}
+
+.peek-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--peek-expanded);
+  height: var(--peek-expanded);
+  max-width: none; /* override global img { max-width: 100% } */
+  object-fit: cover;
+}
+
 /* Align text columns to top of illustration */
 /* We need to calculate where the illustration top is and position text there */
 /* Using JavaScript would be ideal, but we can approximate with CSS */
@@ -198,7 +232,8 @@
   /* Hide desktop layout elements on mobile */
   .page-content,
   .text-columns,
-  .illustration {
+  .illustration,
+  .peek {
     display: none;
   }
   
