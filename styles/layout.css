@@ -172,7 +172,14 @@
     /* Remove desktop gridlines - grid system handles alignment */
     background-image: none;
   }
-  
+
+  /* Desktop's first gridline lives in ::before (a separate layer); the rule
+     above only clears the page-frame's own background. Disable it too, or it
+     leaks a stray vertical line at 25% on mobile. */
+  .page-frame::before {
+    display: none;
+  }
+
   /* Hide desktop layout elements on mobile */
   .page-content,
   .text-columns,
