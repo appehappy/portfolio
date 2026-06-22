@@ -34,15 +34,75 @@ function alignTextToIllustration() {
   }
 }
 
-// Illustration video: play on hover, pause on mouse leave (preloaded for instant play)
+// Illustration video: play forward on hover; on leave, rewind via a reversed
+// clip back to the start pose, then rest there. Forward time t and reverse time
+// (D - t) show the same frame, so swaps between the two layers are instant and
+// seamless (no crossfade, which would double the multiply-blended line art).
 function initIllustrationHover() {
-  document.querySelectorAll('.illustration video').forEach(function (video) {
-    video.addEventListener('mouseenter', function () {
-      video.play().catch(function () {});
+  var REWIND_RATE = 1.75; // how fast the rewind plays back (tunable)
+
+  document.querySelectorAll('.illustration').forEach(function (box) {
+    var fwd = box.querySelector('.illustration-fwd');
+    var rev = box.querySelector('.illustration-rev');
+    if (!fwd || !rev) return;
+
+    var token = 0; // guards against stale reveals when hover toggles quickly
+
+    function duration() {
+      return (fwd.duration && isFinite(fwd.duration)) ? fwd.duration : 5.04;
+    }
+    function clamp(t) {
+      return Math.min(Math.max(t, 0), duration());
+    }
+
+    // Reveal `to` (seeked to targetTime) and hide `from`, but only once `to` has
+    // actually decoded the target frame — otherwise it flashes a stale frame
+    // during the seek. `from` stays visible (frozen) until then; since
+    // forward(t) and reverse(D - t) are the same frame, the swap is invisible.
+    function swapTo(to, from, targetTime, onReady) {
+      var my = ++token;
+      from.pause();
+      var done = false;
+      function reveal() {
+        if (done) return;
+        done = true;
+        to.removeEventListener('seeked', onSeeked);
+        clearTimeout(fallback);
+        if (my !== token) return; // superseded by a newer interaction
+        to.style.opacity = '1';
+        from.style.opacity = '0';
+        onReady();
+      }
+      function onSeeked() { requestAnimationFrame(reveal); }
+      var fallback = setTimeout(reveal, 150); // safety net if 'seeked' never fires
+      if (Math.abs(to.currentTime - targetTime) < 0.02) {
+        requestAnimationFrame(reveal); // already on the frame
+      } else {
+        to.addEventListener('seeked', onSeeked);
+        to.currentTime = targetTime;
+      }
+    }
+
+    function playForward() {
+      var D = duration();
+      // If reverse is the visible layer, pick up forward from the mirrored time.
+      var target = (rev.style.opacity === '1') ? clamp(D - rev.currentTime) : fwd.currentTime;
+      swapTo(fwd, rev, target, function () { fwd.play().catch(function () {}); });
+    }
+
+    function playReverse() {
+      var D = duration();
+      rev.playbackRate = REWIND_RATE;
+      swapTo(rev, fwd, clamp(D - fwd.currentTime), function () { rev.play().catch(function () {}); });
+    }
+
+    // Rewind finished: rest on the final frame (== forward's frame 0 / start pose).
+    rev.addEventListener('ended', function () {
+      rev.pause();
     });
-    video.addEventListener('mouseleave', function () {
-      video.pause();
-    });
+
+    box.addEventListener('mouseenter', playForward);
+    box.addEventListener('mouseleave', playReverse);
   });
 }
 

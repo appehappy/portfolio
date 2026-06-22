@@ -13,8 +13,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500&display=swap">
   <!-- Ruder Plakat Maxi LL is loaded via @font-face in tokens.css -->
 
-  <!-- Preload illustration idle video for instant hover play -->
+  <!-- Preload illustration idle + reverse videos for instant hover play / rewind -->
   <link rel="preload" href="assets/videos/illustration-idle.mp4" as="video">
+  <link rel="preload" href="assets/videos/illustration-idle-reverse.mp4" as="video">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="styles/tokens.css">
@@ -44,11 +45,19 @@
     </div>
     
     <div class="illustration">
-      <video class="illustration-media" poster="assets/images/illustration.png" muted loop playsinline preload="auto" aria-label="Hand-drawn illustration of a man in a suit">
+      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="auto" aria-label="Hand-drawn illustration of a man in a suit">
         <source src="assets/videos/illustration-idle.mp4" type="video/mp4">
       </video>
+      <video class="illustration-rev" muted playsinline preload="auto" aria-hidden="true">
+        <source src="assets/videos/illustration-idle-reverse.mp4" type="video/mp4">
+      </video>
     </div>
-    
+
+    <!-- Peek: masked illustration in the top-right; expands on hover -->
+    <div class="peek">
+      <img class="peek-img" src="assets/images/peek-room.png" alt="Illustration of a chair beside a tall alcove in a blue room">
+    </div>
+
     <!-- Mobile layout: CSS Grid system -->
     <div class="grid-field">
       <div class="logo">

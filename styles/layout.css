@@ -148,11 +148,58 @@
   object-fit: contain;
 }
 
+/* Forward + reverse video layers stack in the same box; JS toggles opacity
+   between them at matched frames (instant, seamless). */
 .illustration video {
+  position: absolute;
+  inset: 0;
   cursor: pointer;
   /* White video background multiplies down to the box's page-color background,
      guaranteeing the illustration never shows a background lighter than the page */
   mix-blend-mode: multiply;
+}
+
+/* Reverse (rewind) layer is hidden until the cursor leaves */
+.illustration-rev {
+  opacity: 0;
+}
+
+/* Peek illustration — a masked square in the top-right that expands on hover.
+   Anchored to its top-right corner (12px from the canvas edges). The image is
+   fixed at the expanded size and the container clips it, so growing the box
+   reveals the illustration out from the top-right corner. Expanded size = the
+   rightmost column (25% of the cream) minus 12px of padding on each side. */
+.peek {
+  --peek-expanded: calc((100vw - var(--border-width) * 2) / 4 - 24px);
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  z-index: 3;
+  cursor: pointer;
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.peek:hover {
+  width: var(--peek-expanded);
+  height: var(--peek-expanded);
+}
+
+.peek-img {
+  /* The image is shown larger than the frame and offset toward the top-right,
+     so even the expanded view is a deliberate crop (Figma: scale 123.72%,
+     top -10.39%, right +15.65%) that keeps the signature and outer margins out
+     of frame. Anchored to the frame's fixed top-right corner, so it stays put
+     while the frame grows and reveals more of the crop. */
+  position: absolute;
+  top: calc(var(--peek-expanded) * -0.1039);
+  right: calc(var(--peek-expanded) * -0.1565);
+  width: calc(var(--peek-expanded) * 1.2372);
+  height: calc(var(--peek-expanded) * 1.2372);
+  max-width: none; /* override global img { max-width: 100% } */
 }
 
 /* Align text columns to top of illustration */
@@ -189,7 +236,8 @@
   /* Hide desktop layout elements on mobile */
   .page-content,
   .text-columns,
-  .illustration {
+  .illustration,
+  .peek {
     display: none;
   }
   
