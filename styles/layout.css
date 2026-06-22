@@ -189,13 +189,17 @@
 }
 
 .peek-img {
+  /* The image is shown larger than the frame and offset toward the top-right,
+     so even the expanded view is a deliberate crop (Figma: scale 123.72%,
+     top -10.39%, right +15.65%) that keeps the signature and outer margins out
+     of frame. Anchored to the frame's fixed top-right corner, so it stays put
+     while the frame grows and reveals more of the crop. */
   position: absolute;
-  top: 0;
-  right: 0;
-  width: var(--peek-expanded);
-  height: var(--peek-expanded);
+  top: calc(var(--peek-expanded) * -0.1039);
+  right: calc(var(--peek-expanded) * -0.1565);
+  width: calc(var(--peek-expanded) * 1.2372);
+  height: calc(var(--peek-expanded) * 1.2372);
   max-width: none; /* override global img { max-width: 100% } */
-  object-fit: cover;
 }
 
 /* Align text columns to top of illustration */
