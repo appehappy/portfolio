@@ -57,8 +57,10 @@ function positionTextColumns(illustrationContainer, textColumns) {
   // The padding box starts at: pageFrameRect.top + borderWidth
   const borderWidth = parseInt(getComputedStyle(pageFrame).borderTopWidth);
   const illustrationTopRelativeToPaddingBox = illustrationRect.top - (pageFrameRect.top + borderWidth);
-  
-  textColumns.style.top = illustrationTopRelativeToPaddingBox + 'px';
+
+  // Sit the text columns 48px below the illustration top
+  const COLUMN_TOP_OFFSET = 48;
+  textColumns.style.top = (illustrationTopRelativeToPaddingBox + COLUMN_TOP_OFFSET) + 'px';
 }
 
 // Expose for page-transition.js to call after swapping to home (realign when DOM/image ready)
