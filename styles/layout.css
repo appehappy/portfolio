@@ -205,7 +205,7 @@
     row-gap: 0; /* per-block gaps set via margin-top (Figma rhythm is uneven) */
     padding: 0; /* critical: grid + gridlines must start at same edge */
     padding-top: 40px;
-    padding-bottom: 40px;
+    padding-bottom: 80px;
     min-height: calc(100vh - 48px); /* Account for 24px border on each side */
     position: relative;
     
@@ -250,17 +250,19 @@
     margin-bottom: 0;
   }
   
-  /* Illustration - left column (left gridline to center gridline) */
+  /* Illustration - enlarged: starts at the left gridline and extends past
+     the center gridline (Figma: 198px of the 345px cream). Spans the content
+     area; width set on the img so its right edge lands at ~cream-x 238. */
   .illustration-mobile {
-    grid-column: 2 / 3;
+    grid-column: 2 / 4;
     grid-row: 3;
-    margin-top: 32px; /* Figma gap: bio bottom -> illustration top */
+    margin-top: 47px; /* Figma gap: bio bottom -> illustration top */
   }
 
   /* Left edge sits on the left gridline (which serves as the left border),
      so only top/right/bottom are drawn (Figma) */
   .illustration-mobile img {
-    width: 100%;
+    width: 74.7%; /* ~198px of the 265px content area */
     height: auto;
     display: block;
     border: 1px solid var(--color-gridline);
@@ -271,7 +273,7 @@
   .lower-text {
     grid-column: 3 / 4;
     grid-row: 4;
-    margin-top: 24px; /* Figma gap: illustration bottom -> "write & draw" */
+    margin-top: 38px; /* Figma gap: illustration bottom -> "write & draw" */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
