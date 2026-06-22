@@ -88,6 +88,10 @@
   /* Gridline at 50% of page-frame width, text starts at 50% + 48px */
   left: calc(50% + 48px);
   width: auto;
+  /* "I do some writing & drawing" — one line on roomy desktops, but capped to
+     its gridline zone so it wraps instead of overlapping "Come back soon" when
+     the viewport is narrow. */
+  max-width: calc(25% - 16px);
 }
 
 .column-soon {
@@ -105,11 +109,13 @@
   margin-bottom: 0;
 }
 
-/* "write & draw" archive link with trailing arrow-up-right icon */
+/* "write & draw" archive link with trailing arrow-up-right icon.
+   No gap: the arrow's 16x16 box has built-in left padding (the glyph is
+   inset), which provides the visual spacing from the text. */
 .archive-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 0;
 }
 
 .archive-link .arrow-icon {
