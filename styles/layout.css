@@ -239,6 +239,7 @@
   .intro-text {
     grid-column: 3 / 4;
     grid-row: 2;
+    margin-top: 40px; /* Figma gap: logo -> bio */
   }
   
   .intro-text p {
@@ -273,7 +274,7 @@
   .lower-text {
     grid-column: 3 / 4;
     grid-row: 4;
-    margin-top: 38px; /* Figma gap: illustration bottom -> "write & draw" */
+    margin-top: 78px; /* Figma gap: illustration bottom -> "write & draw" */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
