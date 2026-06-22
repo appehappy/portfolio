@@ -88,6 +88,10 @@
   /* Gridline at 50% of page-frame width, text starts at 50% + 48px */
   left: calc(50% + 48px);
   width: auto;
+  /* "I do some writing & drawing" — one line on roomy desktops, but capped to
+     its gridline zone so it wraps instead of overlapping "Come back soon" when
+     the viewport is narrow. */
+  max-width: calc(25% - 16px);
 }
 
 .column-soon {
@@ -105,11 +109,13 @@
   margin-bottom: 0;
 }
 
-/* "write & draw" archive link with trailing arrow-up-right icon */
+/* "write & draw" archive link with trailing arrow-up-right icon.
+   No gap: the arrow's 16x16 box has built-in left padding (the glyph is
+   inset), which provides the visual spacing from the text. */
 .archive-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 0;
 }
 
 .archive-link .arrow-icon {
@@ -172,7 +178,14 @@
     /* Remove desktop gridlines - grid system handles alignment */
     background-image: none;
   }
-  
+
+  /* Desktop's first gridline lives in ::before (a separate layer); the rule
+     above only clears the page-frame's own background. Disable it too, or it
+     leaks a stray vertical line at 25% on mobile. */
+  .page-frame::before {
+    display: none;
+  }
+
   /* Hide desktop layout elements on mobile */
   .page-content,
   .text-columns,
@@ -195,10 +208,10 @@
       1fr           /* column B (center to right gridline) */
       40px;         /* right margin */
     
-    row-gap: var(--spacing-lg); /* 64px */
+    row-gap: 0; /* per-block gaps set via margin-top (Figma rhythm is uneven) */
     padding: 0; /* critical: grid + gridlines must start at same edge */
     padding-top: 40px;
-    padding-bottom: 64px;
+    padding-bottom: 80px;
     min-height: calc(100vh - 48px); /* Account for 24px border on each side */
     position: relative;
     
@@ -215,21 +228,24 @@
     background-repeat: no-repeat;
   }
   
-  /* Logo - spans from left gridline to center gridline */
+  /* Logo - large, spans full content width (left gridline to right gridline), top */
   .logo {
-    grid-column: 2 / 3;
+    grid-column: 2 / 4;
+    grid-row: 1;
   }
-  
+
   .logo .logo-svg {
     display: block;
     width: 100%;
     height: auto;
     max-width: 100%;
   }
-  
-  /* Intro text - spans from left gridline to center gridline */
+
+  /* Intro text (bio) - right column (center gridline to right gridline), under logo */
   .intro-text {
-    grid-column: 2 / 3;
+    grid-column: 3 / 4;
+    grid-row: 2;
+    margin-top: 40px; /* Figma gap: logo -> bio */
   }
   
   .intro-text p {
@@ -241,21 +257,30 @@
     margin-bottom: 0;
   }
   
-  /* Illustration - spans from left gridline to right gridline */
+  /* Illustration - enlarged: starts at the left gridline and extends past
+     the center gridline (Figma: 198px of the 345px cream). Spans the content
+     area; width set on the img so its right edge lands at ~cream-x 238. */
   .illustration-mobile {
     grid-column: 2 / 4;
+    grid-row: 3;
+    margin-top: 47px; /* Figma gap: bio bottom -> illustration top */
   }
-  
+
+  /* Left edge sits on the left gridline (which serves as the left border),
+     so only top/right/bottom are drawn (Figma) */
   .illustration-mobile img {
-    width: 100%;
+    width: 74.7%; /* ~198px of the 265px content area */
     height: auto;
     display: block;
     border: 1px solid var(--color-gridline);
+    border-left: none;
   }
-  
-  /* Lower text - spans from left gridline to center gridline */
+
+  /* Lower text - right column (center gridline to right gridline), bottom */
   .lower-text {
-    grid-column: 2 / 3;
+    grid-column: 3 / 4;
+    grid-row: 4;
+    margin-top: 78px; /* Figma gap: illustration bottom -> "write & draw" */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -265,11 +290,7 @@
   }
 
   .lower-text p {
-    margin: 0 0 20px 0;
-  }
-  
-  .lower-text p:last-child {
-    margin-bottom: 0;
+    margin: 0;
   }
 }
 
