@@ -257,17 +257,14 @@
     margin-top: 32px; /* Figma gap: bio bottom -> illustration top */
   }
 
-  /* Left edge sits on the left gridline (serves as the left border).
-     Top border is dropped too: the illustration art has whitespace above
-     the figure, so a top rule floats disconnected and reads as a stray
-     line. Keep right + bottom only. */
+  /* Left edge sits on the left gridline (which serves as the left border),
+     so only top/right/bottom are drawn (Figma) */
   .illustration-mobile img {
     width: 100%;
     height: auto;
     display: block;
     border: 1px solid var(--color-gridline);
     border-left: none;
-    border-top: none;
   }
 
   /* Lower text - right column (center gridline to right gridline), bottom */
