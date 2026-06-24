@@ -32,6 +32,9 @@
   --color-link: #738c7a; /* Muted sage-green for links (Figma) */
   --color-link-hover: #5e7364;
 
+  /* Motion */
+  --ease-reveal: cubic-bezier(.65, .05, .36, 1); /* gentle ease for on-load reveal */
+
   /* Spacing - Human-scaled spacing scale */
   --spacing-xs: 0.5rem;   /* 8px */
   --spacing-sm: 1rem;     /* 16px */

@@ -123,6 +123,43 @@ function positionTextColumns(illustrationContainer, textColumns) {
   textColumns.style.top = (illustrationTopRelativeToPaddingBox + COLUMN_TOP_OFFSET) + 'px';
 }
 
+// Reveal-on-load: add `.in` to .rv / .rv-fade / .peek elements as they enter the
+// viewport (fires immediately for above-the-fold ones). One-shot per element.
+function initReveal() {
+  // Ensure the hidden states apply even if reached via an in-page transition
+  // (page-transition swaps body + re-runs this script; the head's inline guard
+  // ran only on the original load).
+  document.documentElement.classList.add('js');
+
+  var els = document.querySelectorAll('.rv, .rv-fade, .peek');
+  if (!els.length) return;
+
+  // On an in-page transition (this script has already run once this session),
+  // skip the staggered reveal and just show everything — the page transition's
+  // own fade provides the motion, and a second cascade would feel busy.
+  if (window.__revealedOnce) {
+    els.forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+  window.__revealedOnce = true;
+
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+
+  els.forEach(function (el) { io.observe(el); });
+}
+
 // Expose for page-transition.js to call after swapping to home (realign when DOM/image ready)
 window.alignTextToIllustration = alignTextToIllustration;
 
@@ -132,10 +169,12 @@ if (document.readyState === 'complete') {
   requestAnimationFrame(function() { alignTextToIllustration(); });
   setTimeout(alignTextToIllustration, 250);
   initIllustrationHover();
+  initReveal();
 } else {
   window.addEventListener('load', function () {
     alignTextToIllustration();
     initIllustrationHover();
+    initReveal();
   });
 }
 window.addEventListener('resize', alignTextToIllustration);
