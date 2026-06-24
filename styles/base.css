@@ -83,3 +83,42 @@ img {
 *::-webkit-scrollbar-thumb:hover {
   background: #f5e9e0;
 }
+
+/* ---------------------------------------------------------------------------
+   Reveal-on-load
+   Elements fade (and nudge) into place once, when they enter the viewport.
+   Above-the-fold elements reveal immediately on load (the observer fires for
+   already-visible elements). Scoped to .js so content is fully visible if
+   JavaScript is unavailable. One-shot — does not reverse on scroll.
+--------------------------------------------------------------------------- */
+
+/* Fade + translate-up variant */
+.js .rv {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s var(--ease-reveal), transform 0.7s var(--ease-reveal);
+  transition-delay: calc(0.12s + var(--i, 0) * 0.08s); /* 120ms base + 80ms/step stagger */
+}
+
+/* Fade-only variant (for elements whose layout position is measured by JS, so
+   they must not be transformed — e.g. the desktop illustration) */
+.js .rv-fade {
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-reveal);
+  transition-delay: calc(0.12s + var(--i, 0) * 0.08s);
+}
+
+.js .rv.in,
+.js .rv-fade.in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .rv,
+  .js .rv-fade {
+    transition: opacity 0.2s !important;
+    transition-delay: 0s !important;
+    transform: none !important;
+  }
+}
