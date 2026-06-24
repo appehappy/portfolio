@@ -160,6 +160,29 @@ function initReveal() {
   els.forEach(function (el) { io.observe(el); });
 }
 
+// Peek illustration: hover expands it; click pins it open (swaps to the
+// no-background version + border); click again collapses back to the blue square.
+function initPeek() {
+  var peek = document.querySelector('.peek');
+  if (!peek) return;
+
+  peek.addEventListener('click', function () {
+    if (peek.classList.contains('is-pinned')) {
+      // Collapse back to the blue square. Suppress the hover-expand until the
+      // pointer leaves, so it doesn't immediately re-open under the cursor.
+      peek.classList.remove('is-pinned');
+      peek.classList.add('is-suppressed');
+    } else if (!peek.classList.contains('is-suppressed')) {
+      // Pin open from the expanded (hover) state.
+      peek.classList.add('is-pinned');
+    }
+  });
+
+  peek.addEventListener('mouseleave', function () {
+    peek.classList.remove('is-suppressed');
+  });
+}
+
 // Expose for page-transition.js to call after swapping to home (realign when DOM/image ready)
 window.alignTextToIllustration = alignTextToIllustration;
 
@@ -170,11 +193,13 @@ if (document.readyState === 'complete') {
   setTimeout(alignTextToIllustration, 250);
   initIllustrationHover();
   initReveal();
+  initPeek();
 } else {
   window.addEventListener('load', function () {
     alignTextToIllustration();
     initIllustrationHover();
     initReveal();
+    initPeek();
   });
 }
 window.addEventListener('resize', alignTextToIllustration);

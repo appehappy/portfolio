@@ -174,21 +174,29 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
   overflow: hidden;
   z-index: 3;
   cursor: pointer;
-  /* width/height = hover expand (no delay); opacity = on-load reveal (delayed).
-     Folded into one transition so the reveal doesn't clobber the hover. */
+  /* width/height = hover expand / pin; opacity = on-load reveal (delayed).
+     Folded into one transition so they don't clobber each other. */
   transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
               height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
               opacity 0.7s var(--ease-reveal) calc(0.12s + var(--i, 0) * 0.08s);
 }
 
-.peek:hover {
+/* Expand on hover — unless just collapsed by a click while the cursor is still
+   over it (suppressed until the pointer leaves). A pinned box stays expanded. */
+.peek:hover:not(.is-suppressed),
+.peek.is-pinned {
   width: var(--peek-expanded);
   height: var(--peek-expanded);
+}
+
+/* Pinned (clicked open): same 1px border as the man illustration (bottom-left) */
+.peek.is-pinned {
+  border: 1px solid var(--color-gridline);
 }
 
 /* Reveal (opacity only — a transform would shift the absolutely-positioned img) */
@@ -206,18 +214,34 @@
   }
 }
 
+/* Both illustration layers fill the expanded box (object-contain) and are fixed
+   at that size, anchored to the box's top-right corner — so growing the box
+   reveals the illustration out from the top-right, and the collapsed square
+   shows the (blue) top-right corner. */
 .peek-img {
-  /* The image is shown larger than the frame and offset toward the top-right,
-     so even the expanded view is a deliberate crop (Figma: scale 123.72%,
-     top -10.39%, right +15.65%) that keeps the signature and outer margins out
-     of frame. Anchored to the frame's fixed top-right corner, so it stays put
-     while the frame grows and reveals more of the crop. */
   position: absolute;
-  top: calc(var(--peek-expanded) * -0.1039);
-  right: calc(var(--peek-expanded) * -0.1565);
-  width: calc(var(--peek-expanded) * 1.2372);
-  height: calc(var(--peek-expanded) * 1.2372);
+  top: 0;
+  right: 0;
+  width: var(--peek-expanded);
+  height: var(--peek-expanded);
   max-width: none; /* override global img { max-width: 100% } */
+  object-fit: contain;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+/* Blue-background layer is the default; the no-background layer swaps in when
+   pinned (Figma: 88% opacity). */
+.peek-img-plain {
+  opacity: 0;
+}
+
+.peek.is-pinned .peek-img-blue {
+  opacity: 0;
+}
+
+.peek.is-pinned .peek-img-plain {
+  opacity: 0.88;
 }
 
 /* Align text columns to top of illustration */
