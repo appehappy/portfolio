@@ -131,7 +131,7 @@ function initReveal() {
   // ran only on the original load).
   document.documentElement.classList.add('js');
 
-  var els = document.querySelectorAll('.rv, .rv-fade, .peek');
+  var els = document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient');
   if (!els.length) return;
 
   // On an in-page transition (this script has already run once this session),
