@@ -244,6 +244,21 @@
   opacity: 0.88;
 }
 
+/* Soft blue gradient strip down the right edge, sitting atop the peek
+   illustration in all three states (Figma: 24px wide, from the collapsed
+   square's bottom down to 12px from the canvas bottom). */
+.peek-gradient {
+  position: absolute;
+  top: 36px; /* peek top (12px) + collapsed square (24px) */
+  bottom: 12px;
+  right: 12px;
+  width: 24px;
+  z-index: 4; /* above the peek illustration (z-index 3) */
+  pointer-events: none;
+  opacity: 0.24;
+  background: linear-gradient(180deg, #6878ad 0%, var(--color-bg-page) 100%);
+}
+
 /* Align text columns to top of illustration */
 /* We need to calculate where the illustration top is and position text there */
 /* Using JavaScript would be ideal, but we can approximate with CSS */
@@ -279,7 +294,8 @@
   .page-content,
   .text-columns,
   .illustration,
-  .peek {
+  .peek,
+  .peek-gradient {
     display: none;
   }
   
