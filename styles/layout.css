@@ -209,7 +209,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .peek {
+  .js .peek,
+  .js .peek-gradient {
     transition: opacity 0.2s !important;
   }
 }
@@ -257,6 +258,17 @@
   pointer-events: none;
   opacity: 0.24;
   background: linear-gradient(180deg, #6878ad 0%, var(--color-bg-page) 100%);
+  /* Reveal-on-load: fade in with the staggered cascade (same as the peek) */
+  transition: opacity 0.7s var(--ease-reveal) calc(0.12s + var(--i, 0) * 0.08s);
+}
+
+/* Reveal: fade from 0 to its 0.24 target (not 1, like the other reveal layers) */
+.js .peek-gradient {
+  opacity: 0;
+}
+
+.js .peek-gradient.in {
+  opacity: 0.24;
 }
 
 /* Align text columns to top of illustration */
