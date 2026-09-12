@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>brendan appeeee</title>
+  <title>brendan appeeee — Brendan Appe</title>
+  <meta name="description" content="Brendan Appe — product designer working on product experiences at MAI; before that IBM and Digitas. Writing and drawing at archive.appppe.com.">
+  <meta name="author" content="Brendan Appe">
+  <!-- happyappe.com serves this same page; appppe.com is the canonical home. -->
+  <link rel="canonical" href="https://appppe.com/">
 
   <!-- Mark JS as available so the reveal-on-load hidden states apply (and content
        stays visible if JS is off). Failsafe shows everything if main.js never runs. -->
@@ -29,6 +33,28 @@
   <link rel="preload" href="assets/videos/illustration-idle.mp4" as="video">
   <link rel="preload" href="assets/videos/illustration-idle-reverse.mp4" as="video">
 
+  <!-- Who this page is about, for search engines. The archive at
+       archive.appppe.com emits the same Person; the sameAs lists tie the two
+       together. Add new profiles here and in the archive's src/utils/site.ts. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://appppe.com/#person",
+    "name": "Brendan Appe",
+    "url": "https://appppe.com/",
+    "jobTitle": "Product Designer",
+    "worksFor": { "@type": "Organization", "name": "Microsoft AI", "url": "https://microsoft.ai/" },
+    "sameAs": [
+      "https://archive.appppe.com/",
+      "https://happyappe.com/",
+      "https://bsky.app/profile/happyappe.bsky.social",
+      "https://www.reddit.com/user/BrendanAppe/",
+      "https://github.com/appehappy"
+    ]
+  }
+  </script>
+
   <!-- Stylesheets -->
   <link rel="stylesheet" href="styles/tokens.css">
   <link rel="stylesheet" href="styles/base.css">
@@ -49,7 +75,7 @@
         <p>Before before, was an<br>Art Director at<br><a href="https://www.digitas.com/en-us" target="_blank" rel="noopener noreferrer">Digitas</a>.</p>
       </div>
       <div class="column column-writing rv" style="--i:2">
-        <p>I do some <a class="archive-link" href="https://archive.appppe.com/" target="_blank" rel="noopener noreferrer">writing &amp; drawing<svg class="arrow-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M11.3333 12.8333V6.16667H4.66667M11.3333 6.16667L4.66667 12.8333" stroke="currentColor"/></svg></a></p>
+        <p>I do some <a class="archive-link" href="https://archive.appppe.com/" target="_blank" rel="noopener noreferrer">writing &amp; drawing<span class="visually-hidden"> by Brendan Appe</span><svg class="arrow-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M11.3333 12.8333V6.16667H4.66667M11.3333 6.16667L4.66667 12.8333" stroke="currentColor"/></svg></a></p>
       </div>
       <div class="column column-soon rv" style="--i:3">
         <p>Come back soon.</p>
@@ -90,7 +116,7 @@
       </div>
 
       <div class="lower-text rv" style="--i:3">
-        <p>I <a class="archive-link" href="https://archive.appppe.com/" target="_blank" rel="noopener noreferrer">write &amp; draw<svg class="arrow-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M11.3333 12.8333V6.16667H4.66667M11.3333 6.16667L4.66667 12.8333" stroke="currentColor"/></svg></a></p>
+        <p>I <a class="archive-link" href="https://archive.appppe.com/" target="_blank" rel="noopener noreferrer">write &amp; draw<span class="visually-hidden"> by Brendan Appe</span><svg class="arrow-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M11.3333 12.8333V6.16667H4.66667M11.3333 6.16667L4.66667 12.8333" stroke="currentColor"/></svg></a></p>
         <p>Come back soon.</p>
       </div>
     </div>
