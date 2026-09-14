@@ -31,6 +31,10 @@
   --color-text: #1c110a;
   --color-link: #738c7a; /* Muted sage-green for links (Figma) */
   --color-link-hover: #5e7364;
+  --color-text-muted: rgba(28, 17, 10, 0.48);        /* secondary text (Figma 48%) */
+  --color-text-muted-strong: rgba(28, 17, 10, 0.64); /* secondary text, hovered (Figma 64%) */
+  --color-card-fill: rgba(255, 255, 255, 0.64);      /* project history card */
+  --color-card-shadow-rgb: 217, 180, 155;            /* warm shadow under the card */
 
   /* Motion */
   --ease-reveal: cubic-bezier(.65, .05, .36, 1); /* gentle ease for on-load reveal */

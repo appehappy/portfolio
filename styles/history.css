@@ -1,0 +1,328 @@
+/**
+ * Project History
+ *
+ * A panel spanning the two middle columns (first to third gridline), inset
+ * 32px from the top and bottom of the page. Inside it, a translucent card with
+ * a title row and a scrollable list of projects. Rows expand one at a time.
+ * Figma: portfolio - project history (default / hover / expand).
+ */
+
+/* The name stays in the top-left but recedes to the gridline tint (Figma). The
+   colour transition lives on .page-content in layout.css. */
+.history-page .page-content {
+  color: var(--color-gridline);
+}
+
+/* Panel: cream, with a hairline above and below. It sits on top of the center
+   gridline, which is why it needs its own background. */
+.history-panel {
+  position: absolute;
+  top: 32px;
+  bottom: 32px;
+  left: calc(25% + 1px); /* just right of the first gridline */
+  right: 25%;            /* just left of the third gridline */
+  z-index: 2;
+  background: var(--color-bg-page);
+  border-top: 1px solid var(--color-gridline);
+  border-bottom: 1px solid var(--color-gridline);
+}
+
+/* Card: fixed to the panel's inset, so the list has a fixed height to scroll in */
+.history-card {
+  position: absolute;
+  inset: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The card's fill + warm shadow live on a pseudo-element so its 80% opacity
+   (Figma) doesn't dim the text on top of it. */
+.history-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--color-card-fill);
+  opacity: 0.8;
+  box-shadow:
+    0 30px 65px 0 rgba(var(--color-card-shadow-rgb), 0.10),
+    0 118px 118px 0 rgba(var(--color-card-shadow-rgb), 0.09),
+    0 266px 159px 0 rgba(var(--color-card-shadow-rgb), 0.05),
+    0 472px 189px 0 rgba(var(--color-card-shadow-rgb), 0.01),
+    0 738px 207px 0 rgba(var(--color-card-shadow-rgb), 0);
+}
+
+/* Title row: "PROJECT HISTORY" left, ghost "CLOSE" right */
+.history-header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 32px 32px 32px;
+  flex-shrink: 0;
+}
+
+.history-heading,
+.history-close {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 22px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.history-heading {
+  color: var(--color-text);
+}
+
+/* Ghost button: text only, link colour */
+.history-close {
+  color: var(--color-link);
+  text-decoration: none;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.history-close:hover {
+  color: var(--color-link-hover);
+}
+
+/* List: fills the rest of the card and scrolls (custom scrollbar from base.css) */
+.history-list {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.history-item {
+  border-bottom: 1px solid var(--color-gridline);
+  transition: background-color 0.2s ease;
+}
+
+/* Row: the whole row is the expand/collapse control */
+.history-item-toggle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 24px 32px;
+  margin: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.history-item-toggle:focus-visible {
+  outline: 1px solid var(--color-link);
+  outline-offset: -1px;
+}
+
+.history-years {
+  flex-shrink: 0;
+  width: 140px;
+  font-family: var(--font-article-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.history-meta {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.history-brand {
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.history-title {
+  color: var(--color-text);
+  transition: color 0.2s ease;
+}
+
+/* Plus icon; rotates into a close "x" when the row is open */
+.history-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease, transform 0.35s var(--ease-reveal);
+}
+
+/* Hover (Figma: row goes cream, years/brand darken, title + plus go green) */
+.history-item:has(.history-item-toggle:hover) {
+  background: var(--color-bg-page);
+}
+
+.history-item-toggle:hover .history-years,
+.history-item-toggle:hover .history-brand {
+  color: var(--color-text-muted-strong);
+}
+
+.history-item-toggle:hover .history-title,
+.history-item-toggle:hover .history-icon {
+  color: var(--color-link);
+}
+
+/* Expanded (Figma: cream row, years at full ink, plus becomes an "x") */
+.history-item.is-open {
+  background: var(--color-bg-page);
+}
+
+.history-item.is-open .history-years {
+  color: var(--color-text);
+}
+
+.history-item.is-open .history-icon {
+  color: var(--color-text-muted-strong);
+  transform: rotate(45deg);
+}
+
+.history-item.is-open .history-item-toggle:hover .history-icon {
+  color: var(--color-link);
+}
+
+/* Body: height animates via a 0fr -> 1fr grid track; the inner element clips */
+.history-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s var(--ease-reveal);
+}
+
+.history-item.is-open .history-body {
+  grid-template-rows: 1fr;
+}
+
+.history-body-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 24px between the title row (its own bottom padding), the image and the text */
+.history-body-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 32px 24px;
+}
+
+/* Gallery image (Figma: 695 x 391) */
+.history-gallery {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 695 / 391;
+  overflow: hidden;
+}
+
+.history-gallery img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Description (Figma: 12px between paragraphs) */
+.history-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--color-text);
+}
+
+.history-text p {
+  margin: 0;
+}
+
+.history-text p + p {
+  margin-top: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .history-body,
+  .history-icon,
+  .history-item {
+    transition: none;
+  }
+}
+
+/* Narrower desktops: the panel is half the viewport, so let titles wrap */
+@media (max-width: 1200px) {
+  .history-years {
+    width: 112px;
+  }
+
+  .history-meta {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+}
+
+/* Mobile: the illustration and peek are hidden (layout.css); the panel takes
+   the whole frame and the years move onto their own line. */
+@media (max-width: 768px) {
+  .history-panel {
+    inset: 0;
+    border: 0;
+  }
+
+  .history-card {
+    inset: 16px;
+  }
+
+  .history-header {
+    padding: 24px 16px;
+  }
+
+  .history-item-toggle {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18px;
+    gap: 8px 16px;
+    padding: 16px;
+  }
+
+  .history-years {
+    width: auto;
+  }
+
+  .history-icon {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .history-meta {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .history-body-content {
+    padding: 0 16px 16px;
+    gap: 16px;
+  }
+}
