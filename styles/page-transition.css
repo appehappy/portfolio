@@ -31,19 +31,16 @@
   transition: opacity 0.25s ease;
 }
 
-/* Home <-> project history: the name's colour change (layout.css / history.css)
-   is held at the outgoing page's colour until the incoming content starts to
-   fade in, then runs on the same 0.25s clock as that fade. */
-.page-frame.page-transition-history .page-content {
-  transition: color 0.25s ease;
-}
-
-.page-frame.history-page.page-transition-in:not(.page-transition-in-visible) .page-content {
-  color: var(--color-text);
-}
-
-.page-frame.page-transition-history.page-transition-in:not(.page-transition-in-visible):not(.history-page) .page-content {
+/* Home <-> project history: the name recolours from the moment of the click,
+   alongside the outgoing content's fade (transition on .page-content in
+   layout.css). The direction class, set by page-transition.js, wins over the
+   page-level colour until cleanup. */
+.page-frame.page-transition-to-history .page-content {
   color: var(--color-gridline);
+}
+
+.page-frame.page-transition-to-home .page-content {
+  color: var(--color-text);
 }
 
 /* Fade in: only main content areas (logo + illustration stay at full opacity) */

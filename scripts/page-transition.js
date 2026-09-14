@@ -244,7 +244,9 @@
     if (!frame) return;
     var pageUrl = new URL(url, window.location.href);
 
-    frame.classList.add('page-transition-out', 'page-transition-history');
+    /* The direction class recolours the name from the first frame of the fade-out */
+    var directionClass = 'page-transition-to-' + opts.page;
+    frame.classList.add('page-transition-out', 'page-transition-history', directionClass);
     var fadeTarget = frame.querySelector(opts.outSelector) || frame;
 
     waitForTransition(fadeTarget, 'opacity', FADE_DURATION_MS).then(function() {
@@ -270,7 +272,7 @@
       });
 
       /* New content starts hidden (page-transition-in), then fades up */
-      frame.className = newFrame.className + ' page-transition-in page-transition-history';
+      frame.className = newFrame.className + ' page-transition-in page-transition-history ' + directionClass;
       /* The on-load reveal cascade already ran this session; show reveal
          elements outright (class added before first paint, so no animation) */
       frame.querySelectorAll('.rv, .rv-fade').forEach(function(el) { el.classList.add('in'); });
@@ -298,7 +300,7 @@
           frame.classList.add('page-transition-in-visible');
           var fadeInTarget = frame.querySelector(opts.inSelector) || frame;
           waitForTransition(fadeInTarget, 'opacity', FADE_DURATION_MS).then(function() {
-            frame.classList.remove('page-transition-in', 'page-transition-in-visible', 'page-transition-history');
+            frame.classList.remove('page-transition-in', 'page-transition-in-visible', 'page-transition-history', directionClass);
           });
         });
       });
