@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project history — brendan appeeee</title>
+  <meta name="description" content="Project history of Brendan Appe — product design work at Microsoft AI, Toyota, American Airlines, Frito-Lay, Edward Jones, Verizon, Johnson & Johnson and Digitas.">
+  <meta name="author" content="Brendan Appe">
+  <link rel="canonical" href="https://appppe.com/history.html">
+
+  <!-- Mark JS as available so the reveal-on-load hidden states apply (and content
+       stays visible if JS is off). Failsafe shows everything if main.js never runs. -->
+  <script>
+    document.documentElement.classList.add('js');
+    addEventListener('load', function () {
+      setTimeout(function () {
+        if (window.__revealedOnce) return;
+        document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient').forEach(function (el) { el.classList.add('in'); });
+      }, 1200);
+    });
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+
+  <!-- Fonts (Gantari 600 for the panel labels; IBM Plex Mono 400 for the years) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+  <!-- Preload illustration idle + reverse videos for instant hover play / rewind -->
+  <link rel="preload" href="assets/videos/illustration-idle.mp4" as="video">
+  <link rel="preload" href="assets/videos/illustration-idle-reverse.mp4" as="video">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/history.css">
+  <link rel="stylesheet" href="styles/page-transition.css">
+</head>
+<body>
+  <div class="page-frame history-page">
+    <!-- Name, illustration and peek match the homepage; the in-page transition
+         keeps these nodes in place and only swaps the middle of the page. -->
+    <div class="page-content">
+      <h1 class="display-name rv" style="--i:0">brendan<br>appeeee</h1>
+    </div>
+
+    <div class="illustration rv-fade" style="--i:1">
+      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="auto" aria-label="Hand-drawn illustration of a man in a suit">
+        <source src="assets/videos/illustration-idle.mp4" type="video/mp4">
+      </video>
+      <video class="illustration-rev" muted playsinline preload="auto" aria-hidden="true">
+        <source src="assets/videos/illustration-idle-reverse.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="peek" style="--i:4">
+      <img class="peek-img peek-img-blue" src="assets/images/peek-room.jpg" alt="Illustration of a chair beside a tall alcove in a blue room">
+      <img class="peek-img peek-img-plain" src="assets/images/peek-room-plain.png" alt="" aria-hidden="true">
+    </div>
+    <div class="peek-gradient" style="--i:5" aria-hidden="true"></div>
+
+    <!-- Project history: a panel spanning the two middle columns, holding a
+         fixed-height card. The list scrolls inside the card; one project can
+         be expanded at a time (history.js). -->
+    <section class="history-panel rv-fade" style="--i:0" aria-labelledby="history-heading">
+      <div class="history-card">
+        <header class="history-header">
+          <h1 class="history-heading" id="history-heading">Project history</h1>
+          <a class="history-close" href="index.html">Close</a>
+        </header>
+
+        <ul class="history-list">
+          <li class="history-item" id="mai-search-monetization">
+            <button type="button" class="history-item-toggle" aria-expanded="false" aria-controls="mai-search-monetization-body">
+              <span class="history-years">2025-Present</span>
+              <span class="history-meta">
+                <span class="history-brand">Microsoft AI</span>
+                <span class="history-title">Search Monetization</span>
+              </span>
+              <svg class="history-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25M9 3.75V14.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="history-body" id="mai-search-monetization-body" inert>
+              <div class="history-body-inner">
+                <div class="history-body-content">
+                  <figure class="history-gallery">
+                    <img src="assets/images/projects/mai-search-monetization.jpg" alt="A pink sunset over a dark green sea" width="695" height="391" loading="lazy">
+                  </figure>
+                  <div class="history-text">
+                    <p>I’m currently leading experience strategy and design for monetization across AI-Native Search results and surfaces at Microsoft.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="history-item" id="toyota-demand-supply">
+            <button type="button" class="history-item-toggle" aria-expanded="false" aria-controls="toyota-demand-supply-body">
+              <span class="history-years">2022-2024</span>
+              <span class="history-meta">
+                <span class="history-brand">Toyota</span>
+                <span class="history-title">Demand &amp; Supply Management Ecosystem</span>
+              </span>
+              <svg class="history-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25M9 3.75V14.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="history-body" id="toyota-demand-supply-body" inert>
+              <div class="history-body-inner">
+                <div class="history-body-content">
+                  <figure class="history-gallery">
+                    <img src="assets/images/projects/toyota-demand-supply.jpg" alt="Red sand dunes with a route traced across them" width="695" height="391" loading="lazy">
+                  </figure>
+                  <div class="history-text">
+                    <p>Spearheaded design for Toyota’s next-generation supply chain platform, unifying fragmented logistics tools into a cohesive system.</p>
+                    <p>Defined future-state visions like the “Golden Thread,” and led AI-driven UX initiatives that improved vehicle ETA accuracy, exception visibility, and build optimization.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="history-item" id="american-airlines-aileron">
+            <button type="button" class="history-item-toggle" aria-expanded="false" aria-controls="american-airlines-aileron-body">
+              <span class="history-years">2021-2022</span>
+              <span class="history-meta">
+                <span class="history-brand">American Airlines</span>
+                <span class="history-title">Aileron Design System</span>
+              </span>
+              <svg class="history-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25M9 3.75V14.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="history-body" id="american-airlines-aileron-body" inert>
+              <div class="history-body-inner">
+                <div class="history-body-content">
+                  <figure class="history-gallery">
+                    <img src="assets/images/projects/american-airlines-aileron.jpg" alt="A sunset split into blue, grey, charcoal and red vertical bands, with a large letter A outlined across them" width="695" height="391" loading="lazy">
+                  </figure>
+                  <div class="history-text">
+                    <p>Lead design of the Aileron Design System to support customer-facing experiences, with its first pilot applied to the customer booking flow.</p>
+                    <p>Standardized interaction patterns and components, ensuring accessibility, consistency, and cross-platform scalability while collaborating closely with engineering and brand stakeholders.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="history-item" id="frito-lay-go-to-market">
+            <button type="button" class="history-item-toggle" aria-expanded="false" aria-controls="frito-lay-go-to-market-body">
+              <span class="history-years">2020-2021</span>
+              <span class="history-meta">
+                <span class="history-brand">Frito-Lay</span>
+                <span class="history-title">Precision Go-To-Market Tools &amp; Technology</span>
+              </span>
+              <svg class="history-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25M9 3.75V14.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="history-body" id="frito-lay-go-to-market-body" inert>
+              <div class="history-body-inner">
+                <div class="history-body-content">
+                  <figure class="history-gallery">
+                    <img src="assets/images/projects/frito-lay-go-to-market.jpg" alt="An orange sunset over flat rooftops rendered as dark green and orange blocks" width="1390" height="782" loading="lazy">
+                  </figure>
+                  <div class="history-text">
+                    <p>As Design Director for a multi-year initiative with Frito-Lay, I led efforts to reimagine how frontline employees and small-format retailers interact with the business—modernizing legacy systems and reshaping workflows to empower smarter stocking, faster delivery, and data-driven decision-making across 30,000+ retail stores.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="history-item" id="edward-jones-client-care">
+            <button type="button" class="history-item-toggle" aria-expanded="false" aria-controls="edward-jones-client-care-body">
+              <span class="history-years">2019-2020</span>
+              <span class="history-meta">
+                <span class="history-brand">Edward Jones</span>
+                <span class="history-title">Client Care Commitment</span>
+              </span>
+              <svg class="history-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25M9 3.75V14.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="history-body" id="edward-jones-client-care-body" inert>
+              <div class="history-body-inner">
+                <div class="history-body-content">
+                  <div class="history-text">
+                    <p>In 2019 the financial advisory industry was facing new regulatory challenges. Edward Jones recognized the need to go beyond compliance, proactively enhancing the client experience and improving internal workflows.</p>
+                    <p>I led design for portfolio management tools as part of a broader digital modernization. Worked closely with users and stakeholders to define a product strategy and experience vision that supported goal discovery, account opening, and investment management.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="history-item" id="verizon-service-provisioning">
+            <button type="button" class="history-item-toggle" aria-expanded="false" aria-controls="verizon-service-provisioning-body">
+              <span class="history-years">2018-2019</span>
+              <span class="history-meta">
+                <span class="history-brand">Verizon</span>
+                <span class="history-title">Service Provisioning Platform</span>
+              </span>
+              <svg class="history-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25M9 3.75V14.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="history-body" id="verizon-service-provisioning-body" inert>
+              <div class="history-body-inner">
+                <div class="history-body-content">
+                  <div class="history-text">
+                    <p>Verizon embarked on a digital transformation initiative aimed at improving user engagement, operational efficiency, and business value. As part of this effort, Verizon partnered with IBM to modernize IntradaPro, a decades-old billing and provisioning platform originally built in the 1980s.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="history-item" id="johnson-johnson-carepath">
+            <button type="button" class="history-item-toggle" aria-expanded="false" aria-controls="johnson-johnson-carepath-body">
+              <span class="history-years">2016-2018</span>
+              <span class="history-meta">
+                <span class="history-brand">Johnson &amp; Johnson</span>
+                <span class="history-title">CarePath Patient &amp; Provider</span>
+              </span>
+              <svg class="history-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25M9 3.75V14.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="history-body" id="johnson-johnson-carepath-body" inert>
+              <div class="history-body-inner">
+                <div class="history-body-content">
+                  <div class="history-text">
+                    <p>As one of two senior designers on Janssen’s CarePath transformation, I helped consolidate 20+ fragmented product sites into a unified platform for patients and providers. I led UI design, defined the component library, and owned key experiences like the provider portal and onboarding—while also navigating regulatory approvals to ensure compliance across the system.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="history-item" id="digitas-art-direction">
+            <button type="button" class="history-item-toggle" aria-expanded="false" aria-controls="digitas-art-direction-body">
+              <span class="history-years">2012-2016</span>
+              <span class="history-meta">
+                <span class="history-brand">Digitas</span>
+                <span class="history-title">Art Direction &amp; Design</span>
+              </span>
+              <svg class="history-icon" viewBox="0 0 18 18" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25M9 3.75V14.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="history-body" id="digitas-art-direction-body" inert>
+              <div class="history-body-inner">
+                <div class="history-body-content">
+                  <div class="history-text">
+                    <p>As an Art Director at Digitas in Boston, I honed my craft in concept development, creative collaboration, and digital illustration for clients like Bank of America, leading multi-channel campaigns and partnering cross-functionally to align UX with brand goals. My work spanned brand and campaign assets — one of which was even spoofed in an SNL sketch — but I increasingly found myself drawn past the execution and toward the strategy behind it, and toward collaborating more directly with the people actually consuming what I made.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script src="scripts/main.js"></script>
+  <script src="scripts/history.js"></script>
+  <script src="scripts/page-transition.js"></script>
+</body>
+</html>

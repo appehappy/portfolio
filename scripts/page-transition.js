@@ -1,7 +1,9 @@
 /**
  * Page Transition
  *
- * In-page transition between homepage and writing page: fade out, animate lanes, swap content, fade in.
+ * In-page transitions. Home <-> writing: fade out, animate lanes, swap the body, fade in.
+ * Home <-> project history: the frame, illustration and peek stay put; only the
+ * rest of the frame's content is faded out, swapped and faded in.
  * Intercepts internal links and uses fetch + History API.
  */
 
@@ -16,6 +18,14 @@
 
   function isWritingPage() {
     return document.querySelector('.page-frame.writing-page') !== null;
+  }
+
+  function isHistoryPage() {
+    return document.querySelector('.page-frame.history-page') !== null;
+  }
+
+  function isHistoryPath(pathname) {
+    return pathname.endsWith('history.html') || pathname === '/history' || pathname.endsWith('/history');
   }
 
   function isInternalLink(link) {
@@ -34,6 +44,7 @@
     try {
       var pathname = new URL(link.href, window.location.href).pathname;
       if (pathname.endsWith('writing.html') || pathname === '/writing' || pathname.endsWith('/writing')) return 'writing';
+      if (isHistoryPath(pathname)) return 'history';
       if (pathname === '/' || pathname === '' || pathname.endsWith('/index.html') || pathname.endsWith('/')) return 'home';
       return null;
     } catch (e) {
@@ -205,6 +216,125 @@
     });
   }
 
+  /* Home <-> project history. The name, illustration, peek and gradient are
+     identical on both pages, so the frame and those nodes stay put; only the rest
+     of the frame's children fade out, get swapped, and fade in. Nothing
+     reloads, so the illustration never flashes. */
+  var SHARED_SELECTOR = '.page-content, .illustration, .peek, .peek-gradient';
+
+  function isSharedNode(el) {
+    return el.nodeType === 1 && el.matches(SHARED_SELECTOR);
+  }
+
+  function ensureStylesheet(href) {
+    if (!href || document.head.querySelector('link[href*="' + href + '"]')) return Promise.resolve();
+    return new Promise(function(resolve) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      /* Cache-bust: this file is never on the page at load, so a refresh would not revalidate it */
+      link.href = 'styles/' + href + '?_t=' + Date.now();
+      link.onload = resolve;
+      link.onerror = resolve;
+      document.head.appendChild(link);
+    });
+  }
+
+  function swapWithinFrame(url, opts) {
+    var frame = getPageFrame();
+    if (!frame) return;
+    var pageUrl = new URL(url, window.location.href);
+
+    frame.classList.add('page-transition-out', 'page-transition-history');
+    var fadeTarget = frame.querySelector(opts.outSelector) || frame;
+
+    waitForTransition(fadeTarget, 'opacity', FADE_DURATION_MS).then(function() {
+      return ensureStylesheet(opts.stylesheet);
+    }).then(function() {
+      var base = pageUrl.origin + pageUrl.pathname + pageUrl.search;
+      var bust = base + (pageUrl.search ? '&' : '?') + '_t=' + Date.now();
+      return fetch(bust).then(function(res) {
+        if (!res.ok) throw new Error('Fetch failed');
+        return res.text();
+      });
+    }).then(function(html) {
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var newFrame = doc.querySelector('.page-frame');
+      if (!newFrame) throw new Error('No page frame');
+
+      /* Swap everything except the shared nodes */
+      Array.prototype.slice.call(frame.children).forEach(function(el) {
+        if (!isSharedNode(el)) frame.removeChild(el);
+      });
+      Array.prototype.slice.call(newFrame.children).forEach(function(el) {
+        if (!isSharedNode(el)) frame.appendChild(document.adoptNode(el));
+      });
+
+      /* New content starts hidden (page-transition-in), then fades up */
+      frame.className = newFrame.className + ' page-transition-in page-transition-history';
+      /* The on-load reveal cascade already ran this session; show reveal
+         elements outright (class added before first paint, so no animation) */
+      frame.querySelectorAll('.rv, .rv-fade').forEach(function(el) { el.classList.add('in'); });
+
+      var newTitle = doc.querySelector('title');
+      if (newTitle) document.title = newTitle.textContent;
+
+      /* URL first: history.js reads the hash when it initialises */
+      if (opts.push !== false) {
+        history.pushState({ page: opts.page }, '', pageUrl.pathname + pageUrl.hash);
+      }
+
+      /* Page-specific script: a fresh element re-runs it against the new nodes.
+         main.js is not re-run — the illustration hover is already bound. */
+      if (opts.script) {
+        var script = document.createElement('script');
+        script.src = 'scripts/' + opts.script + '?_t=' + Date.now();
+        document.body.appendChild(script);
+      }
+
+      if (typeof opts.after === 'function') opts.after();
+
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          frame.classList.add('page-transition-in-visible');
+          var fadeInTarget = frame.querySelector(opts.inSelector) || frame;
+          waitForTransition(fadeInTarget, 'opacity', FADE_DURATION_MS).then(function() {
+            frame.classList.remove('page-transition-in', 'page-transition-in-visible', 'page-transition-history');
+          });
+        });
+      });
+    }).catch(function() {
+      window.location.href = pageUrl.href;
+    });
+  }
+
+  function runHomeAlignment() {
+    if (typeof window.alignTextToIllustration !== 'function') return;
+    window.alignTextToIllustration();
+    requestAnimationFrame(function() { window.alignTextToIllustration(); });
+    setTimeout(function() { window.alignTextToIllustration(); }, 300);
+  }
+
+  function transitionToHistory(link, push) {
+    swapWithinFrame(link.href, {
+      page: 'history',
+      push: push,
+      outSelector: '.text-columns, .grid-field',
+      inSelector: '.history-panel',
+      stylesheet: 'history.css',
+      script: 'history.js'
+    });
+  }
+
+  function transitionHistoryToHome(link, push) {
+    swapWithinFrame(link.href, {
+      page: 'home',
+      push: push,
+      outSelector: '.history-panel',
+      inSelector: '.text-columns, .grid-field',
+      after: runHomeAlignment
+    });
+  }
+
   function transitionToHome(link) {
     var frame = getPageFrame();
     if (!frame) return;
@@ -213,7 +343,7 @@
 
     frame.classList.add('page-transition-out');
 
-    var fadeTarget = frame.querySelector('.article-list-container, .article-content');
+    var fadeTarget = frame.querySelector('.article-list-container, .article-content, .history-panel');
     if (!fadeTarget) fadeTarget = frame;
     waitForTransition(fadeTarget, 'opacity', FADE_DURATION_MS).then(function() {
       var homeUrlCacheBust = homeUrl + (homeUrl.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
@@ -249,6 +379,8 @@
 
       var writingLink = document.head.querySelector('link[href*="writing.css"]');
       if (writingLink) writingLink.remove();
+      var historyLink = document.head.querySelector('link[href*="history.css"]');
+      if (historyLink) historyLink.remove();
 
       if (newFrame) {
         requestAnimationFrame(function() {
@@ -293,7 +425,14 @@
     e.preventDefault();
 
     if (target === 'writing') {
+      // The lane animation assumes the home gridlines; from any other page, do a full load.
+      if (isHistoryPage()) return window.location.assign(link.href);
       transitionToWriting(link);
+    } else if (target === 'history') {
+      if (isWritingPage()) return window.location.assign(link.href);
+      transitionToHistory(link);
+    } else if (isHistoryPage()) {
+      transitionHistoryToHome(link);
     } else {
       transitionToHome(link);
     }
@@ -304,9 +443,14 @@
     var link = document.createElement('a');
     link.href = window.location.href;
     if (pathname.endsWith('writing.html') || pathname.endsWith('/writing')) {
-      if (!isWritingPage()) transitionToWriting(link);
+      if (isHistoryPage()) window.location.reload();
+      else if (!isWritingPage()) transitionToWriting(link);
+    } else if (isHistoryPath(pathname)) {
+      if (isWritingPage()) window.location.reload();
+      else if (!isHistoryPage()) transitionToHistory(link, false);
     } else {
-      if (isWritingPage()) transitionToHome(link);
+      if (isHistoryPage()) transitionHistoryToHome(link, false);
+      else if (isWritingPage()) transitionToHome(link);
     }
   }
 

@@ -21,14 +21,23 @@ See [PROJECT_PHILOSOPHY.md](./PROJECT_PHILOSOPHY.md) for complete design princip
 ```
 portfolio/
 ├── index.html              # Main homepage
+├── writing.html            # Writing section (articles from data/articles.json)
+├── history.html            # Project history (expand/collapse list of projects)
 ├── styles/
 │   ├── tokens.css          # Design tokens (colors, spacing, typography)
 │   ├── base.css            # Base styles and reset
-│   └── layout.css          # Page layout and grid system
+│   ├── layout.css          # Page layout and grid system
+│   ├── writing.css         # Writing section layout
+│   ├── history.css         # Project history panel, list, expanded rows
+│   └── page-transition.css # In-page fades between home / writing / history
 ├── scripts/
-│   └── main.js             # Placeholder for future progressive enhancement
+│   ├── main.js             # Layout alignment, illustration hover, reveal-on-load
+│   ├── writing.js          # Article list + content
+│   ├── history.js          # Project expand/collapse (one open at a time)
+│   └── page-transition.js  # Fetch + swap transitions between pages
 ├── assets/
 │   ├── images/             # Images and illustrations
+│   ├── images/projects/    # Project history imagery
 │   └── fonts/              # Web fonts (Ruder Plakat Maxi LL)
 ├── data/                   # Future: JSON feeds for BlueSky, Substack
 ├── README.md               # This file
