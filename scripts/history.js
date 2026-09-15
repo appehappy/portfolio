@@ -9,7 +9,8 @@
 (function () {
   function init() {
     var list = document.querySelector('.history-list');
-    if (!list) return;
+    if (!list || list.dataset.ready) return;
+    list.dataset.ready = '1';
 
     var items = Array.prototype.slice.call(list.querySelectorAll('.history-item'));
 
@@ -86,6 +87,9 @@
       });
     }
   }
+
+  /* Exposed so page-transition.js can initialise nodes it has just swapped in */
+  window.initProjectHistory = init;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

@@ -56,6 +56,7 @@
     return new Promise(function(resolve) {
       var timeout = setTimeout(function() { resolve(); }, fallbackMs);
       function onEnd(e) {
+        if (e.target !== element) return; /* ignore bubbled transitions from descendants */
         if (propertyName && e.propertyName !== propertyName) return;
         element.removeEventListener('transitionend', onEnd);
         clearTimeout(timeout);
@@ -219,7 +220,12 @@
   /* Home <-> project history. The name, illustration, peek and gradient are
      identical on both pages, so the frame and those nodes stay put; only the rest
      of the frame's children fade out, get swapped, and fade in. Nothing
-     reloads, so the illustration never flashes. */
+     reloads, so the illustration never flashes.
+
+     Everything the swap needs (the other page's HTML, history.css, history.js)
+     is warmed up at idle and on hover, and any remaining load runs in parallel
+     with the fade-out, so there is no blank gap between the fade-out and the
+     fade-in on a real network. */
   var SHARED_SELECTOR = '.page-content, .illustration, .peek, .peek-gradient';
 
   function isSharedNode(el) {
@@ -239,6 +245,61 @@
     });
   }
 
+  /* Page-specific script, loaded once per document. history.js exposes
+     window.initProjectHistory so a swap can initialise freshly inserted nodes
+     synchronously, before they are first painted. */
+  function ensureScript(name) {
+    if (!name || document.querySelector('script[src*="' + name + '"]')) return Promise.resolve();
+    return new Promise(function(resolve) {
+      var script = document.createElement('script');
+      script.src = 'scripts/' + name + '?_t=' + Date.now();
+      script.onload = resolve;
+      script.onerror = resolve;
+      document.body.appendChild(script);
+    });
+  }
+
+  /* Fetched page HTML, keyed by URL, kept for the life of the document.
+     'no-cache' revalidates with the server so a stale copy is never used. */
+  var pageCache = {};
+
+  function fetchPage(url) {
+    var key = url.origin + url.pathname + url.search;
+    if (!pageCache[key]) {
+      pageCache[key] = fetch(key, { cache: 'no-cache' }).then(function(res) {
+        if (!res.ok) throw new Error('Fetch failed');
+        return res.text();
+      }).catch(function(err) {
+        delete pageCache[key];
+        throw err;
+      });
+    }
+    return pageCache[key];
+  }
+
+  function warmUp(link, stylesheet, script) {
+    fetchPage(new URL(link.href, window.location.href)).catch(function() {});
+    ensureStylesheet(stylesheet);
+    ensureScript(script);
+  }
+
+  /* Warm up the other side of the home <-> history pair: at idle, and on the
+     first hover / focus / touch of the link in case idle has not come yet. */
+  function scheduleWarmUp() {
+    var onHistory = isHistoryPage();
+    var link = document.querySelector(onHistory ? '.history-close' : '.history-link');
+    if (!link) return;
+    function run() {
+      if (onHistory) warmUp(link);
+      else warmUp(link, 'history.css', 'history.js');
+    }
+    ['mouseenter', 'focus', 'touchstart'].forEach(function(evt) {
+      link.addEventListener(evt, run, { once: true, passive: true });
+    });
+    if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 2000 });
+    else setTimeout(run, 1000);
+  }
+
   function swapWithinFrame(url, opts) {
     var frame = getPageFrame();
     if (!frame) return;
@@ -249,16 +310,14 @@
     frame.classList.add('page-transition-out', 'page-transition-history', directionClass);
     var fadeTarget = frame.querySelector(opts.outSelector) || frame;
 
-    waitForTransition(fadeTarget, 'opacity', FADE_DURATION_MS).then(function() {
-      return ensureStylesheet(opts.stylesheet);
-    }).then(function() {
-      var base = pageUrl.origin + pageUrl.pathname + pageUrl.search;
-      var bust = base + (pageUrl.search ? '&' : '?') + '_t=' + Date.now();
-      return fetch(bust).then(function(res) {
-        if (!res.ok) throw new Error('Fetch failed');
-        return res.text();
-      });
-    }).then(function(html) {
+    /* Fade out while (if needed) the page, stylesheet and script load */
+    Promise.all([
+      waitForTransition(fadeTarget, 'opacity', FADE_DURATION_MS),
+      fetchPage(pageUrl),
+      ensureStylesheet(opts.stylesheet),
+      ensureScript(opts.script)
+    ]).then(function(results) {
+      var html = results[1];
       var doc = new DOMParser().parseFromString(html, 'text/html');
       var newFrame = doc.querySelector('.page-frame');
       if (!newFrame) throw new Error('No page frame');
@@ -280,20 +339,19 @@
       var newTitle = doc.querySelector('title');
       if (newTitle) document.title = newTitle.textContent;
 
-      /* URL first: history.js reads the hash when it initialises */
+      /* URL first: the history script reads the hash when it initialises */
       if (opts.push !== false) {
         history.pushState({ page: opts.page }, '', pageUrl.pathname + pageUrl.hash);
       }
 
-      /* Page-specific script: a fresh element re-runs it against the new nodes.
+      /* Initialise the page-specific script against the new nodes, before
+         first paint (so e.g. the first project is already open as it fades in).
          main.js is not re-run — the illustration hover is already bound. */
-      if (opts.script) {
-        var script = document.createElement('script');
-        script.src = 'scripts/' + opts.script + '?_t=' + Date.now();
-        document.body.appendChild(script);
-      }
-
+      if (opts.init && typeof window[opts.init] === 'function') window[opts.init]();
       if (typeof opts.after === 'function') opts.after();
+
+      /* Warm up the way back */
+      scheduleWarmUp();
 
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
@@ -323,7 +381,8 @@
       outSelector: '.text-columns, .grid-field',
       inSelector: '.history-panel',
       stylesheet: 'history.css',
-      script: 'history.js'
+      script: 'history.js',
+      init: 'initProjectHistory'
     });
   }
 
@@ -416,6 +475,7 @@
   }
 
   function handleClick(e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     var link = e.target.closest('a');
     if (!link || !getPageFrame()) return;
 
@@ -459,5 +519,6 @@
   if (getPageFrame()) {
     document.addEventListener('click', handleClick, false);
     window.addEventListener('popstate', handlePopState);
+    scheduleWarmUp();
   }
 })();
