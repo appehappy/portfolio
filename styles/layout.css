@@ -196,45 +196,62 @@
 }
 
 /* Peek illustration — a masked square in the top-right that expands on hover.
-   Anchored to its top-right corner (12px from the canvas edges). The image is
-   fixed at the expanded size and the container clips it, so growing the box
-   reveals the illustration out from the top-right corner. Expanded size = the
-   rightmost column (25% of the cream) minus 12px of padding on each side. */
+   The box is always the expanded size (the rightmost column, 25% of the
+   cream, minus 12px of padding on each side), anchored 12px from the canvas
+   edges; a clip-path shows only its top-right square until it opens. Clipping
+   instead of resizing means no layout per frame, and since hit-testing
+   follows the clip, the collapsed hover target is still just the square. */
 .peek {
   --peek-expanded: calc((100vw - var(--border-width) * 2) / 4 - 24px);
+  --peek-collapsed: 24px;
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 24px;
-  height: 24px;
+  width: var(--peek-expanded);
+  height: var(--peek-expanded);
   overflow: hidden;
   z-index: 3;
   cursor: pointer;
-  /* width/height = hover expand / pin; transform = on-load stamp (delayed,
-     base.css). Folded into one transition so they don't clobber each other. */
+  clip-path: inset(0 0 calc(100% - var(--peek-collapsed)) calc(100% - var(--peek-collapsed)));
+  /* clip-path = hover expand / pin (closing here); transform = on-load stamp
+     (delayed, base.css). Folded into one transition so they don't clobber
+     each other. */
   transform-origin: 100% 0;
-  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-              height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+  transition: clip-path var(--dur-4) var(--ease-in-out),
               transform var(--dur-3) var(--ease-out-expo) var(--d, 0s);
 }
 
-/* Expand on hover — unless just collapsed by a click while the cursor is still
-   over it (suppressed until the pointer leaves). A pinned box stays expanded. */
+/* Expand on hover — after a short intent delay, so a cursor passing through
+   the corner (on its way to the browser's own controls) doesn't pop it —
+   unless just collapsed by a click while the cursor is still over it
+   (suppressed until the pointer leaves). A pinned box stays expanded. */
 .peek:hover:not(.is-suppressed),
 .peek.is-pinned {
-  width: var(--peek-expanded);
-  height: var(--peek-expanded);
+  clip-path: inset(0);
+  transition: clip-path var(--dur-5) var(--ease-out-expo) 90ms,
+              transform var(--dur-3) var(--ease-out-expo) var(--d, 0s);
 }
 
-/* Pinned (clicked open): same 1px border as the man illustration (bottom-left) */
-.peek.is-pinned {
-  border: 1px solid var(--color-gridline);
+/* Pinned (clicked open): the same 1px rule as the man illustration
+   (bottom-left), drawn inside the box so nothing shifts when it appears */
+.peek::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--color-gridline);
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
 }
 
-/* Both illustration layers fill the expanded box (object-contain) and are fixed
-   at that size, anchored to the box's top-right corner — so growing the box
-   reveals the illustration out from the top-right, and the collapsed square
-   shows the (blue) top-right corner. */
+.peek.is-pinned::after {
+  opacity: 1;
+}
+
+/* Both illustration layers fill the box (object-contain), anchored to its
+   top-right corner, so the collapsed square shows the (blue) top-right
+   corner. As the mask opens the image settles from 1.06 into place, which
+   gives the reveal depth instead of a flat wipe. */
 .peek-img {
   position: absolute;
   top: 0;
@@ -244,7 +261,17 @@
   max-width: none; /* override global img { max-width: 100% } */
   object-fit: contain;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transform: scale(1.06);
+  transform-origin: 100% 0;
+  transition: opacity var(--dur-3) var(--ease-out),
+              transform var(--dur-4) var(--ease-in-out);
+}
+
+.peek:hover:not(.is-suppressed) .peek-img,
+.peek.is-pinned .peek-img {
+  transform: none;
+  transition: opacity var(--dur-3) var(--ease-out),
+              transform var(--dur-5) var(--ease-out-expo) 90ms;
 }
 
 /* Blue-background layer is the default; the no-background layer swaps in when
@@ -259,6 +286,15 @@
 
 .peek.is-pinned .peek-img-plain {
   opacity: 0.88;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Opens and closes in one step; no settle */
+  .peek-img,
+  .peek:hover:not(.is-suppressed) .peek-img,
+  .peek.is-pinned .peek-img {
+    transform: none;
+  }
 }
 
 /* Soft blue gradient strip down the right edge, sitting atop the peek

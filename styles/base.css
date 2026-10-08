@@ -219,13 +219,17 @@ img {
     transition: none;
   }
 
-  /* Peek and gradient fade instead of stamping and pouring */
+  /* Peek and gradient fade instead of stamping and pouring (the peek keeps
+     its collapsed clip; with no clip transition it opens in one step) */
   .js .peek,
   .js .peek-gradient {
     transform: none;
-    clip-path: none;
     opacity: 0;
     transition: opacity 0.2s !important;
+  }
+
+  .js .peek-gradient {
+    clip-path: none;
   }
 
   .js .peek.in {
