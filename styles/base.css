@@ -155,25 +155,25 @@ img {
    already-visible elements). Scoped to .js so content is fully visible if
    JavaScript is unavailable. One-shot — does not reverse on scroll.
 
-   Opacity is short and the rise is long, so nothing looks ghosted while it
-   settles. Each element's start time is --d (the desktop intro timeline
-   below) or, failing that, a stagger on --i.
+   The fade is long enough to be seen and finishes before the rise settles,
+   so nothing looks ghosted. Each element's start time is --d (the desktop
+   intro timeline below) or, failing that, a stagger on --i (mobile).
 --------------------------------------------------------------------------- */
 
 /* Fade + rise variant. Rise distance scales with mass (--rise). */
 .js .rv {
   opacity: 0;
   transform: translateY(var(--rise, var(--rise-1)));
-  transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-6) var(--ease-out-expo);
-  transition-delay: var(--d, calc(120ms + var(--i, 0) * var(--stagger)));
+  transition: opacity var(--dur-4) var(--ease-out), transform var(--dur-6) var(--ease-out-expo);
+  transition-delay: var(--d, calc(160ms + var(--i, 0) * 100ms));
 }
 
 /* Fade-only variant (for elements whose layout position is measured by JS, so
    they must not be transformed — e.g. the desktop illustration) */
 .js .rv-fade {
   opacity: 0;
-  transition: opacity var(--dur-6) var(--ease-out);
-  transition-delay: var(--d, calc(120ms + var(--i, 0) * var(--stagger)));
+  transition: opacity var(--dur-7) var(--ease-out);
+  transition-delay: var(--d, calc(160ms + var(--i, 0) * 100ms));
 }
 
 .js .rv.in,
@@ -182,19 +182,19 @@ img {
   transform: none;
 }
 
-/* Gridlines rule in top to bottom, left to right: the sheet is ruled before
-   anything is set on it */
+/* Gridlines rule in top to bottom, left to right, like pen strokes: the
+   sheet is ruled before anything is set on it */
 .js .gridline {
   transform: scaleY(0);
-  transition: transform var(--dur-7) var(--ease-out-expo);
+  transition: transform var(--dur-7) var(--ease-draw);
 }
 
 .js .gridline--2 {
-  transition-delay: 80ms;
+  transition-delay: 100ms;
 }
 
 .js .gridline--3 {
-  transition-delay: 160ms;
+  transition-delay: 200ms;
 }
 
 .js .gridlines.in .gridline {
@@ -219,25 +219,31 @@ img {
   clip-path: inset(0);
 }
 
-/* Desktop intro timeline ("ruled, set, placed, stamped"): gridlines from 0,
-   the name line by line (then the e's, one by one), the illustration, the
-   columns left to right, the peek, the gradient. Readable by ~600ms. */
+/* Desktop intro timeline ("ruled, set, placed, stamped"). Each beat starts
+   once the one before it is visibly under way, so the order reads:
+     0      gridlines rule down (to ~1.4s)
+     280    the name sets, line by line, then the e's one by one
+     620    the illustration is placed
+     800    the columns, left to right
+     1350   the blue square stamps in, after a breath
+     1500   the gradient pours down out of it (to ~3.1s)
+   Readable by ~1.5s. */
 .display-name {
   --rise: var(--rise-2);
 }
 
-.display-name .line:nth-child(1) { --d: 120ms; }
-.display-name .line:nth-child(2) { --d: 200ms; }
-.display-name .e:nth-child(1) { --d: 235ms; }
-.display-name .e:nth-child(2) { --d: 270ms; }
-.display-name .e:nth-child(3) { --d: 305ms; }
-.display-name .e:nth-child(4) { --d: 340ms; }
-.illustration { --d: 300ms; }
-.column-bio { --d: 380ms; }
-.column-writing { --d: 440ms; }
-.column-soon { --d: 500ms; }
-.peek { --d: 760ms; }
-.peek-gradient { --d: 880ms; }
+.display-name .line:nth-child(1) { --d: 280ms; }
+.display-name .line:nth-child(2) { --d: 400ms; }
+.display-name .e:nth-child(1) { --d: 480ms; }
+.display-name .e:nth-child(2) { --d: 540ms; }
+.display-name .e:nth-child(3) { --d: 600ms; }
+.display-name .e:nth-child(4) { --d: 660ms; }
+.illustration { --d: 620ms; }
+.column-bio { --d: 800ms; }
+.column-writing { --d: 900ms; }
+.column-soon { --d: 1000ms; }
+.peek { --d: 1350ms; }
+.peek-gradient { --d: 1500ms; }
 
 /* Mobile: the logo is the name */
 .logo {

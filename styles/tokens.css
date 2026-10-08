@@ -49,13 +49,15 @@
   --dur-4: 460ms;  /* accordion open, peek close */
   --dur-5: 640ms;  /* name recolour, peek open, hairline draw */
   --dur-6: 900ms;  /* entrance transforms, image mask reveal */
-  --dur-7: 1200ms; /* gridline draw, gradient pour */
+  --dur-7: 1200ms; /* gridline draw, illustration fade-in */
+  --dur-8: 1600ms; /* gradient pour (the intro's slow tail) */
 
   /* Motion — easing. Entrances decelerate, exits accelerate. */
   --ease-out: cubic-bezier(.22, 1, .36, 1);     /* default entrance */
   --ease-out-expo: cubic-bezier(.16, 1, .3, 1); /* draws, mask reveals, long settles */
   --ease-in-out: cubic-bezier(.65, 0, .35, 1);  /* morphs (accordion close, recolour) */
   --ease-in: cubic-bezier(.4, 0, 1, 1);         /* exits */
+  --ease-draw: cubic-bezier(.3, 0, .2, 1);      /* a pen stroke: eases in, travels, settles */
 
   /* Motion — distance and rhythm. Distance scales with mass. */
   --rise-1: 6px;   /* body text */

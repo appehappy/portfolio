@@ -266,7 +266,7 @@
      each other. */
   transform-origin: 100% 0;
   transition: clip-path var(--dur-4) var(--ease-in-out),
-              transform var(--dur-3) var(--ease-out-expo) var(--d, 0s);
+              transform var(--dur-4) var(--ease-out-expo) var(--d, 0s);
 }
 
 /* Expand on hover — after a short intent delay, so a cursor passing through
@@ -277,7 +277,7 @@
 .peek.is-pinned {
   clip-path: inset(0);
   transition: clip-path var(--dur-5) var(--ease-out-expo) 90ms,
-              transform var(--dur-3) var(--ease-out-expo) var(--d, 0s);
+              transform var(--dur-4) var(--ease-out-expo) var(--d, 0s);
 }
 
 /* Pinned (clicked open): the same 1px rule as the man illustration
@@ -359,7 +359,7 @@
   opacity: 0.24;
   background: linear-gradient(180deg, #6878ad 0%, var(--color-bg-page) 100%);
   /* On load it pours down out of the square (base.css) */
-  transition: clip-path var(--dur-7) var(--ease-out-expo) var(--d, 0s);
+  transition: clip-path var(--dur-8) var(--ease-draw) var(--d, 0s);
 }
 
 /* Align text columns to top of illustration */
