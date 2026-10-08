@@ -14,37 +14,46 @@
   min-height: 100vh;
   border: var(--border-width) solid var(--color-border);
   background-color: var(--color-bg-page);
-  /* Lines 2 and 3: positions animatable for page transition; line 1 is in ::before so it can fade */
-  background-image: 
-    linear-gradient(to right, var(--color-gridline) 1px, transparent 1px),
-    linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
-  background-position: var(--line-2) 0, var(--line-3) 0;
-  background-size: 1px 100%;
-  background-repeat: no-repeat;
   padding: var(--content-padding);
 }
 
-/* First gridline in its own layer so it can fade out during transition (no movement) */
-.page-frame::before {
-  content: '';
+/* Decorative gridlines: hairlines at the frame's --line-* positions (the
+   writing transition animates those). Real elements rather than frame
+   backgrounds, so they can be ruled in with a transform (base.css). */
+.gridlines {
   position: absolute;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
-  background-image: linear-gradient(to right, var(--color-gridline) 1px, transparent 1px);
-  background-position: var(--line-1) 0;
-  background-size: 1px 100%;
-  background-repeat: no-repeat;
-  /* opacity transition overridden in page-transition.css when .page-transition-out */
-  transition: opacity 0.2s ease;
+}
+
+.gridline {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--line-1);
+  width: 1px;
+  background: var(--color-gridline);
+  transform-origin: 50% 0;
+}
+
+.gridline--2 {
+  left: var(--line-2);
+}
+
+.gridline--3 {
+  left: var(--line-3);
 }
 
 /* Page Content - Contains title/logo; above illustration when window is short.
-   Owns the name's colour so it can cross-fade between pages (history.css mutes it). */
+   Owns the name's colour so it can cross-fade between pages (history.css mutes
+   it). The recolour is the biggest change on screen, so it takes its time: it
+   is still settling as the other page's content arrives. */
 .page-content {
   position: relative;
   z-index: 2;
-  color: var(--color-text);
-  transition: color 0.25s ease; /* same clock as the page-transition fades */
+  color: var(--color-name-ink);
+  transition: color var(--dur-5) var(--ease-in-out);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -64,6 +73,17 @@
   margin-top: 16px;
   font-weight: normal;
   letter-spacing: 0;
+}
+
+/* The name is split so it can be set line by line (and the e's one by one)
+   on load. Splitting doesn't change the glyph positions: this face has no
+   kerning across those pairs. */
+.display-name .line {
+  display: block;
+}
+
+.display-name .e {
+  display: inline-block;
 }
 
 /* Text columns container - positioned to align with top of illustration */
@@ -135,6 +155,53 @@
   flex-shrink: 0;
 }
 
+/* The outbound arrow says where it goes: a 1.5px nudge up and to the right */
+.archive-link .arrow-icon {
+  transition: transform var(--dur-3) var(--ease-out);
+}
+
+/* The list icon previews the list: its three rules re-draw from the left,
+   one after another */
+.history-link .link-icon-rule {
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+}
+
+@keyframes link-icon-rule-draw {
+  from { transform: scaleX(0); }
+  to { transform: none; }
+}
+
+@media (hover: hover) {
+  .archive-link:hover .arrow-icon {
+    transform: translate(1.5px, -1.5px);
+  }
+
+  .history-link:hover .link-icon-rule {
+    animation: link-icon-rule-draw var(--dur-4) var(--ease-out-expo) both;
+  }
+
+  .history-link:hover .link-icon-rule:nth-of-type(3) {
+    animation-delay: 40ms;
+  }
+
+  .history-link:hover .link-icon-rule:nth-of-type(4) {
+    animation-delay: 80ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-link .arrow-icon,
+  .archive-link:hover .arrow-icon {
+    transform: none;
+    transition: none;
+  }
+
+  .history-link:hover .link-icon-rule {
+    animation: none;
+  }
+}
+
 /* Illustration - absolutely positioned at bottom-left of page */
 /* Fixed box (static image aspect 530×1480) so video hover doesn’t resize */
 .illustration {
@@ -164,7 +231,8 @@
 .illustration video {
   position: absolute;
   inset: 0;
-  cursor: pointer;
+  /* Hovering plays him; there's nothing to click, so no pointer cursor */
+  cursor: default;
   /* White video background multiplies down to the box's page-color background,
      guaranteeing the illustration never shows a background lighter than the page */
   mix-blend-mode: multiply;
@@ -176,60 +244,62 @@
 }
 
 /* Peek illustration — a masked square in the top-right that expands on hover.
-   Anchored to its top-right corner (12px from the canvas edges). The image is
-   fixed at the expanded size and the container clips it, so growing the box
-   reveals the illustration out from the top-right corner. Expanded size = the
-   rightmost column (25% of the cream) minus 12px of padding on each side. */
+   The box is always the expanded size (the rightmost column, 25% of the
+   cream, minus 12px of padding on each side), anchored 12px from the canvas
+   edges; a clip-path shows only its top-right square until it opens. Clipping
+   instead of resizing means no layout per frame, and since hit-testing
+   follows the clip, the collapsed hover target is still just the square. */
 .peek {
   --peek-expanded: calc((100vw - var(--border-width) * 2) / 4 - 24px);
+  --peek-collapsed: 24px;
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 24px;
-  height: 24px;
+  width: var(--peek-expanded);
+  height: var(--peek-expanded);
   overflow: hidden;
   z-index: 3;
   cursor: pointer;
-  /* width/height = hover expand / pin; opacity = on-load reveal (delayed).
-     Folded into one transition so they don't clobber each other. */
-  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-              height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.7s var(--ease-reveal) calc(0.12s + var(--i, 0) * 0.08s);
+  clip-path: inset(0 0 calc(100% - var(--peek-collapsed)) calc(100% - var(--peek-collapsed)));
+  /* clip-path = hover expand / pin (closing here); transform = on-load stamp
+     (delayed, base.css). Folded into one transition so they don't clobber
+     each other. */
+  transform-origin: 100% 0;
+  transition: clip-path var(--dur-4) var(--ease-in-out),
+              transform var(--dur-4) var(--ease-out-expo) var(--d, 0s);
 }
 
-/* Expand on hover — unless just collapsed by a click while the cursor is still
-   over it (suppressed until the pointer leaves). A pinned box stays expanded. */
+/* Expand on hover — after a short intent delay, so a cursor passing through
+   the corner (on its way to the browser's own controls) doesn't pop it —
+   unless just collapsed by a click while the cursor is still over it
+   (suppressed until the pointer leaves). A pinned box stays expanded. */
 .peek:hover:not(.is-suppressed),
 .peek.is-pinned {
-  width: var(--peek-expanded);
-  height: var(--peek-expanded);
+  clip-path: inset(0);
+  transition: clip-path var(--dur-5) var(--ease-out-expo) 90ms,
+              transform var(--dur-4) var(--ease-out-expo) var(--d, 0s);
 }
 
-/* Pinned (clicked open): same 1px border as the man illustration (bottom-left) */
-.peek.is-pinned {
-  border: 1px solid var(--color-gridline);
-}
-
-/* Reveal (opacity only — a transform would shift the absolutely-positioned img) */
-.js .peek {
+/* Pinned (clicked open): the same 1px rule as the man illustration
+   (bottom-left), drawn inside the box so nothing shifts when it appears */
+.peek::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--color-gridline);
   opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
 }
 
-.js .peek.in {
+.peek.is-pinned::after {
   opacity: 1;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .js .peek,
-  .js .peek-gradient {
-    transition: opacity 0.2s !important;
-  }
-}
-
-/* Both illustration layers fill the expanded box (object-contain) and are fixed
-   at that size, anchored to the box's top-right corner — so growing the box
-   reveals the illustration out from the top-right, and the collapsed square
-   shows the (blue) top-right corner. */
+/* Both illustration layers fill the box (object-contain), anchored to its
+   top-right corner, so the collapsed square shows the (blue) top-right
+   corner. As the mask opens the image settles from 1.06 into place, which
+   gives the reveal depth instead of a flat wipe. */
 .peek-img {
   position: absolute;
   top: 0;
@@ -239,7 +309,17 @@
   max-width: none; /* override global img { max-width: 100% } */
   object-fit: contain;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transform: scale(1.06);
+  transform-origin: 100% 0;
+  transition: opacity var(--dur-3) var(--ease-out),
+              transform var(--dur-4) var(--ease-in-out);
+}
+
+.peek:hover:not(.is-suppressed) .peek-img,
+.peek.is-pinned .peek-img {
+  transform: none;
+  transition: opacity var(--dur-3) var(--ease-out),
+              transform var(--dur-5) var(--ease-out-expo) 90ms;
 }
 
 /* Blue-background layer is the default; the no-background layer swaps in when
@@ -256,6 +336,15 @@
   opacity: 0.88;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  /* Opens and closes in one step; no settle */
+  .peek-img,
+  .peek:hover:not(.is-suppressed) .peek-img,
+  .peek.is-pinned .peek-img {
+    transform: none;
+  }
+}
+
 /* Soft blue gradient strip down the right edge, sitting atop the peek
    illustration in all three states (Figma: 24px wide, from the collapsed
    square's bottom down to 12px from the canvas bottom). */
@@ -269,17 +358,8 @@
   pointer-events: none;
   opacity: 0.24;
   background: linear-gradient(180deg, #6878ad 0%, var(--color-bg-page) 100%);
-  /* Reveal-on-load: fade in with the staggered cascade (same as the peek) */
-  transition: opacity 0.7s var(--ease-reveal) calc(0.12s + var(--i, 0) * 0.08s);
-}
-
-/* Reveal: fade from 0 to its 0.24 target (not 1, like the other reveal layers) */
-.js .peek-gradient {
-  opacity: 0;
-}
-
-.js .peek-gradient.in {
-  opacity: 0.24;
+  /* On load it pours down out of the square (base.css) */
+  transition: clip-path var(--dur-8) var(--ease-draw) var(--d, 0s);
 }
 
 /* Align text columns to top of illustration */
@@ -306,10 +386,9 @@
     background-image: none;
   }
 
-  /* Desktop's first gridline lives in ::before (a separate layer); the rule
-     above only clears the page-frame's own background. Disable it too, or it
-     leaks a stray vertical line at 25% on mobile. */
-  .page-frame::before {
+  /* Mobile draws its own rails on .grid-field; the desktop gridlines would
+     leak stray vertical lines at the quarter marks. */
+  .gridlines {
     display: none;
   }
 

@@ -10,14 +10,17 @@
   <link rel="canonical" href="https://appppe.com/">
 
   <!-- Mark JS as available so the reveal-on-load hidden states apply (and content
-       stays visible if JS is off). Failsafe shows everything if main.js never runs. -->
+       stays visible if JS is off). A tab that has already played the intro gets
+       the short version. Failsafe shows everything if main.js never runs. -->
   <script>
     document.documentElement.classList.add('js');
-    addEventListener('load', function () {
+    try { if (sessionStorage.getItem('appe:intro')) document.documentElement.classList.add('intro-quick'); } catch (e) {}
+    addEventListener('DOMContentLoaded', function () {
       setTimeout(function () {
         if (window.__revealedOnce) return;
-        document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient').forEach(function (el) { el.classList.add('in'); });
-      }, 1200);
+        document.documentElement.classList.add('intro-started');
+        document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient, .gridlines').forEach(function (el) { el.classList.add('in'); });
+      }, 2000);
     });
   </script>
 
@@ -33,9 +36,6 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap">
   <!-- Ruder Plakat Maxi LL is loaded via @font-face in tokens.css -->
 
-  <!-- Preload illustration idle + reverse videos for instant hover play / rewind -->
-  <link rel="preload" href="assets/videos/illustration-idle.mp4" as="video">
-  <link rel="preload" href="assets/videos/illustration-idle-reverse.mp4" as="video">
 
   <!-- Who this page is about, for search engines. The archive at
        archive.appppe.com emits the same Person; the sameAs lists tie the two
@@ -67,9 +67,18 @@
 </head>
 <body>
   <div class="page-frame">
+    <!-- Decorative gridlines at the quarter marks: real elements (not frame
+         backgrounds) so they can be ruled in on load. Shared across home and
+         history, so the in-page transition never touches them. -->
+    <div class="gridlines" aria-hidden="true">
+      <span class="gridline gridline--1"></span>
+      <span class="gridline gridline--2"></span>
+      <span class="gridline gridline--3"></span>
+    </div>
+
     <!-- Desktop layout (default) -->
     <div class="page-content">
-      <h1 class="display-name rv" style="--i:0">brendan<br>appeeee</h1>
+      <h1 class="display-name" aria-label="brendan appeeee"><span class="line rv">brendan </span><span class="line rv">app<span class="e rv">e</span><span class="e rv">e</span><span class="e rv">e</span><span class="e rv">e</span></span></h1>
     </div>
 
     <div class="text-columns">
@@ -77,7 +86,7 @@
         <p>Currently, working on<br>product experiences at <a href="https://microsoft.ai/" target="_blank" rel="noopener noreferrer">MAI</a>.</p>
         <p>Before, was an<br>Experience Consultant<br>at <a href="https://www.ibm.com/us-en" target="_blank" rel="noopener noreferrer">IBM</a>.</p>
         <p>Before before, was an<br>Art Director at<br><a href="https://www.digitas.com/en-us" target="_blank" rel="noopener noreferrer">Digitas</a>.</p>
-        <p>See my <a class="history-link" href="history.html">project history<svg class="link-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M4 9.5H4.00444M4 12H4.00444M4 7H4.00444M6.22222 9.5H12M6.22222 12H12M6.22222 7H12" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"/></svg></a></p>
+        <p>See my <a class="history-link" href="history.html">project history<svg class="link-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"><path d="M4 7H4.00444M4 9.5H4.00444M4 12H4.00444"/><path class="link-icon-rule" d="M6.22222 7H12"/><path class="link-icon-rule" d="M6.22222 9.5H12"/><path class="link-icon-rule" d="M6.22222 12H12"/></svg></a></p>
       </div>
       <div class="column column-writing rv" style="--i:2">
         <p>I do some <a class="archive-link" href="https://archive.appppe.com/" target="_blank" rel="noopener noreferrer">writing &amp; drawing<span class="visually-hidden"> by Brendan Appe</span><svg class="arrow-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M11.3333 12.8333V6.16667H4.66667M11.3333 6.16667L4.66667 12.8333" stroke="currentColor"/></svg></a></p>
@@ -88,10 +97,10 @@
     </div>
 
     <div class="illustration rv-fade" style="--i:1">
-      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="auto" aria-label="Hand-drawn illustration of a man in a suit">
+      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="none" aria-label="Hand-drawn illustration of a man in a suit">
         <source src="assets/videos/illustration-idle.mp4" type="video/mp4">
       </video>
-      <video class="illustration-rev" muted playsinline preload="auto" aria-hidden="true">
+      <video class="illustration-rev" muted playsinline preload="none" aria-hidden="true">
         <source src="assets/videos/illustration-idle-reverse.mp4" type="video/mp4">
       </video>
     </div>
@@ -114,7 +123,7 @@
         <p>Currently, working on product experiences at <a href="https://microsoft.ai/" target="_blank" rel="noopener noreferrer">MAI</a>.</p>
         <p>Before, was an Experience Consultant at <a href="https://www.ibm.com/us-en" target="_blank" rel="noopener noreferrer">IBM</a>.</p>
         <p>Before before, was an Art Director at <a href="https://www.digitas.com/en-us" target="_blank" rel="noopener noreferrer">Digitas</a>.</p>
-        <p>See my <a class="history-link" href="history.html">project history<svg class="link-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M4 9.5H4.00444M4 12H4.00444M4 7H4.00444M6.22222 9.5H12M6.22222 12H12M6.22222 7H12" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"/></svg></a></p>
+        <p>See my <a class="history-link" href="history.html">project history<svg class="link-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"><path d="M4 7H4.00444M4 9.5H4.00444M4 12H4.00444"/><path class="link-icon-rule" d="M6.22222 7H12"/><path class="link-icon-rule" d="M6.22222 9.5H12"/><path class="link-icon-rule" d="M6.22222 12H12"/></svg></a></p>
       </div>
 
       <div class="illustration-mobile rv" style="--i:2">
@@ -129,6 +138,7 @@
   </div>
   
   <!-- Future: Progressive enhancement scripts will go here -->
+  <script src="scripts/motion.js"></script>
   <script src="scripts/main.js"></script>
   <script src="scripts/page-transition.js"></script>
 </body>

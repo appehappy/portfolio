@@ -42,15 +42,79 @@ p:last-child {
   margin-bottom: 0;
 }
 
-/* Links */
+/* Links: hover comes in fast and leaves slowly */
 a {
   color: var(--color-link);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--dur-3) var(--ease-out);
 }
 
 a:hover {
   color: var(--color-link-hover);
+  transition-duration: var(--dur-1);
+}
+
+/* Page links (not article prose) get a hairline that rules in left to right
+   on hover or keyboard focus and leaves off to the right, in the same
+   ruled-line language as the gridlines and the history panel */
+.column a,
+.intro-text a,
+.lower-text a,
+.history-close {
+  position: relative;
+}
+
+.column a::after,
+.intro-text a::after,
+.lower-text a::after,
+.history-close::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform var(--dur-3) var(--ease-in-out);
+}
+
+/* Links that end in an icon: the rule stops at the text */
+.archive-link::after,
+.history-link::after {
+  right: 16px;
+}
+
+.column a:focus-visible::after,
+.intro-text a:focus-visible::after,
+.lower-text a:focus-visible::after,
+.history-close:focus-visible::after {
+  transform: none;
+  transform-origin: 0 50%;
+  transition: transform var(--dur-4) var(--ease-out-expo);
+}
+
+@media (hover: hover) {
+  .column a:hover::after,
+  .intro-text a:hover::after,
+  .lower-text a:hover::after,
+  .history-close:hover::after {
+    transform: none;
+    transform-origin: 0 50%;
+    transition: transform var(--dur-4) var(--ease-out-expo);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .column a::after,
+  .intro-text a::after,
+  .lower-text a::after,
+  .history-close::after {
+    transition: none !important;
+  }
 }
 
 /* Images */
@@ -86,26 +150,30 @@ img {
 
 /* ---------------------------------------------------------------------------
    Reveal-on-load
-   Elements fade (and nudge) into place once, when they enter the viewport.
+   Elements fade (and rise) into place once, when they enter the viewport.
    Above-the-fold elements reveal immediately on load (the observer fires for
    already-visible elements). Scoped to .js so content is fully visible if
    JavaScript is unavailable. One-shot — does not reverse on scroll.
+
+   The fade is long enough to be seen and finishes before the rise settles,
+   so nothing looks ghosted. Each element's start time is --d (the desktop
+   intro timeline below) or, failing that, a stagger on --i (mobile).
 --------------------------------------------------------------------------- */
 
-/* Fade + translate-up variant */
+/* Fade + rise variant. Rise distance scales with mass (--rise). */
 .js .rv {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.7s var(--ease-reveal), transform 0.7s var(--ease-reveal);
-  transition-delay: calc(0.12s + var(--i, 0) * 0.08s); /* 120ms base + 80ms/step stagger */
+  transform: translateY(var(--rise, var(--rise-1)));
+  transition: opacity var(--dur-4) var(--ease-out), transform var(--dur-6) var(--ease-out-expo);
+  transition-delay: var(--d, calc(160ms + var(--i, 0) * 100ms));
 }
 
 /* Fade-only variant (for elements whose layout position is measured by JS, so
    they must not be transformed — e.g. the desktop illustration) */
 .js .rv-fade {
   opacity: 0;
-  transition: opacity 0.7s var(--ease-reveal);
-  transition-delay: calc(0.12s + var(--i, 0) * 0.08s);
+  transition: opacity var(--dur-7) var(--ease-out);
+  transition-delay: var(--d, calc(160ms + var(--i, 0) * 100ms));
 }
 
 .js .rv.in,
@@ -114,12 +182,132 @@ img {
   transform: none;
 }
 
+/* Gridlines rule in top to bottom, left to right, like pen strokes: the
+   sheet is ruled before anything is set on it */
+.js .gridline {
+  transform: scaleY(0);
+  transition: transform var(--dur-7) var(--ease-draw);
+}
+
+.js .gridline--2 {
+  transition-delay: 100ms;
+}
+
+.js .gridline--3 {
+  transition-delay: 200ms;
+}
+
+.js .gridlines.in .gridline {
+  transform: none;
+}
+
+/* The peek square stamps in from its top-right corner; the gradient strip
+   then pours down out of it (its 0.24 opacity never changes) */
+.js .peek {
+  transform: scale(0);
+}
+
+.js .peek.in {
+  transform: none;
+}
+
+.js .peek-gradient {
+  clip-path: inset(0 0 100% 0);
+}
+
+.js .peek-gradient.in {
+  clip-path: inset(0);
+}
+
+/* Desktop intro timeline ("ruled, set, placed, stamped"). Each beat starts
+   once the one before it is visibly under way, so the order reads:
+     0      gridlines rule down (to ~1.4s)
+     280    the name sets, line by line, then the e's one by one
+     620    the illustration is placed
+     800    the columns, left to right
+     1350   the blue square stamps in, after a breath
+     1500   the gradient pours down out of it (to ~3.1s)
+   Readable by ~1.5s. */
+.display-name {
+  --rise: var(--rise-2);
+}
+
+.display-name .line:nth-child(1) { --d: 280ms; }
+.display-name .line:nth-child(2) { --d: 400ms; }
+.display-name .e:nth-child(1) { --d: 480ms; }
+.display-name .e:nth-child(2) { --d: 540ms; }
+.display-name .e:nth-child(3) { --d: 600ms; }
+.display-name .e:nth-child(4) { --d: 660ms; }
+.illustration { --d: 620ms; }
+.column-bio { --d: 800ms; }
+.column-writing { --d: 900ms; }
+.column-soon { --d: 1000ms; }
+.peek { --d: 1350ms; }
+.peek-gradient { --d: 1500ms; }
+
+/* Mobile: the logo is the name */
+.logo {
+  --rise: var(--rise-2);
+}
+
+/* A tab that has already played the intro gets the short version: no ruling,
+   a small rise, a tight stagger (~450ms in all) */
+.js.intro-quick .gridline {
+  transform: none;
+}
+
+.js.intro-quick .rv {
+  --rise: 4px;
+  transition-duration: var(--dur-2), var(--dur-4);
+  transition-delay: calc(var(--i, 0) * 30ms);
+}
+
+.js.intro-quick .rv-fade {
+  transition-duration: var(--dur-3);
+  transition-delay: 0s;
+}
+
+.js.intro-quick .peek {
+  transition-delay: 0s;
+}
+
+.js.intro-quick .peek-gradient {
+  transition-duration: var(--dur-5);
+  transition-delay: 0s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .js .rv,
   .js .rv-fade {
     transition: opacity 0.2s !important;
     transition-delay: 0s !important;
     transform: none !important;
+  }
+
+  .js .gridline {
+    transform: none;
+    transition: none;
+  }
+
+  /* Peek and gradient fade instead of stamping and pouring (the peek keeps
+     its collapsed clip; with no clip transition it opens in one step) */
+  .js .peek,
+  .js .peek-gradient {
+    transform: none;
+    opacity: 0;
+    transition: opacity 0.2s !important;
+  }
+
+  .js .peek-gradient {
+    clip-path: none;
+  }
+
+  .js .peek.in {
+    opacity: 1;
+  }
+
+  .js .peek-gradient.in {
+    opacity: 0.24;
   }
 }
 

@@ -9,27 +9,28 @@
   <link rel="canonical" href="https://appppe.com/history.html">
 
   <!-- Mark JS as available so the reveal-on-load hidden states apply (and content
-       stays visible if JS is off). Failsafe shows everything if main.js never runs. -->
+       stays visible if JS is off). A tab that has already played the intro gets
+       the short version. Failsafe shows everything if main.js never runs. -->
   <script>
     document.documentElement.classList.add('js');
-    addEventListener('load', function () {
+    try { if (sessionStorage.getItem('appe:intro')) document.documentElement.classList.add('intro-quick'); } catch (e) {}
+    addEventListener('DOMContentLoaded', function () {
       setTimeout(function () {
         if (window.__revealedOnce) return;
-        document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient').forEach(function (el) { el.classList.add('in'); });
-      }, 1200);
+        document.documentElement.classList.add('intro-started');
+        document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient, .gridlines').forEach(function (el) { el.classList.add('in'); });
+      }, 2000);
     });
   </script>
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 
-  <!-- Fonts (Gantari 600 for the panel labels; IBM Plex Mono 400 for the years) -->
+  <!-- Fonts (Ruder Plakat for the name; Gantari 600 for the panel labels; IBM Plex Mono 400 for the years) -->
+  <link rel="preload" href="assets/fonts/RuderPlakatMaxiLLTT-Regular.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 
-  <!-- Preload illustration idle + reverse videos for instant hover play / rewind -->
-  <link rel="preload" href="assets/videos/illustration-idle.mp4" as="video">
-  <link rel="preload" href="assets/videos/illustration-idle-reverse.mp4" as="video">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="styles/tokens.css">
@@ -40,17 +41,26 @@
 </head>
 <body>
   <div class="page-frame history-page">
+    <!-- Decorative gridlines at the quarter marks: real elements (not frame
+         backgrounds) so they can be ruled in on load. Shared across home and
+         history, so the in-page transition never touches them. -->
+    <div class="gridlines" aria-hidden="true">
+      <span class="gridline gridline--1"></span>
+      <span class="gridline gridline--2"></span>
+      <span class="gridline gridline--3"></span>
+    </div>
+
     <!-- Name, illustration and peek match the homepage; the in-page transition
          keeps these nodes in place and only swaps the middle of the page. -->
     <div class="page-content">
-      <h1 class="display-name rv" style="--i:0">brendan<br>appeeee</h1>
+      <h1 class="display-name" aria-label="brendan appeeee"><span class="line rv">brendan </span><span class="line rv">app<span class="e rv">e</span><span class="e rv">e</span><span class="e rv">e</span><span class="e rv">e</span></span></h1>
     </div>
 
     <div class="illustration rv-fade" style="--i:1">
-      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="auto" aria-label="Hand-drawn illustration of a man in a suit">
+      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="none" aria-label="Hand-drawn illustration of a man in a suit">
         <source src="assets/videos/illustration-idle.mp4" type="video/mp4">
       </video>
-      <video class="illustration-rev" muted playsinline preload="auto" aria-hidden="true">
+      <video class="illustration-rev" muted playsinline preload="none" aria-hidden="true">
         <source src="assets/videos/illustration-idle-reverse.mp4" type="video/mp4">
       </video>
     </div>
@@ -64,7 +74,7 @@
     <!-- Project history: a panel spanning the two middle columns, holding a
          fixed-height card. The list scrolls inside the card; one project can
          be expanded at a time (history.js). -->
-    <section class="history-panel rv-fade" style="--i:0" aria-labelledby="history-heading">
+    <section class="history-panel" aria-labelledby="history-heading">
       <div class="history-card">
         <header class="history-header">
           <h1 class="history-heading" id="history-heading">Project history</h1>
@@ -251,6 +261,7 @@
     </section>
   </div>
 
+  <script src="scripts/motion.js"></script>
   <script src="scripts/main.js"></script>
   <script src="scripts/history.js"></script>
   <script src="scripts/page-transition.js"></script>

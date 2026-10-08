@@ -35,9 +35,35 @@
   --color-text-muted-strong: rgba(28, 17, 10, 0.64); /* secondary text, hovered (Figma 64%) */
   --color-card-fill: rgba(255, 255, 255, 0.64);      /* project history card */
   --color-card-shadow-rgb: 217, 180, 155;            /* warm shadow under the card */
+  /* The name's ink and its receded tint on the history page (= --color-text
+     and --color-gridline), in oklch so the change between them fades evenly */
+  --color-name-ink: oklch(19.02% 0.0229 53.36);
+  --color-name-receded: oklch(94.1% 0.0178 59.47);
 
-  /* Motion */
-  --ease-reveal: cubic-bezier(.65, .05, .36, 1); /* gentle ease for on-load reveal */
+  /* Motion — durations. Exits are shorter than entrances; hover-in is
+     faster than hover-out. scripts/motion.js reads these, so CSS and JS
+     sequences run on the same clock. */
+  --dur-1: 120ms;  /* hover-in, micro feedback */
+  --dur-2: 180ms;  /* exits, content fade-out */
+  --dur-3: 280ms;  /* hover-out, state crossfades */
+  --dur-4: 460ms;  /* accordion open, peek close */
+  --dur-5: 640ms;  /* name recolour, peek open, hairline draw */
+  --dur-6: 900ms;  /* entrance transforms, image mask reveal */
+  --dur-7: 1200ms; /* gridline draw, illustration fade-in */
+  --dur-8: 1600ms; /* gradient pour (the intro's slow tail) */
+
+  /* Motion — easing. Entrances decelerate, exits accelerate. */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);     /* default entrance */
+  --ease-out-expo: cubic-bezier(.16, 1, .3, 1); /* draws, mask reveals, long settles */
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);  /* morphs (accordion close, recolour) */
+  --ease-in: cubic-bezier(.4, 0, 1, 1);         /* exits */
+  --ease-draw: cubic-bezier(.3, 0, .2, 1);      /* a pen stroke: eases in, travels, settles */
+
+  /* Motion — distance and rhythm. Distance scales with mass. */
+  --rise-1: 6px;   /* body text */
+  --rise-2: 10px;  /* display name */
+  --rise-3: 12px;  /* panel card */
+  --stagger: 60ms;
 
   /* Spacing - Human-scaled spacing scale */
   --spacing-xs: 0.5rem;   /* 8px */
