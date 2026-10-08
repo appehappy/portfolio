@@ -37,8 +37,10 @@ function initIllustrationHover() {
   var SETTLE_RATE = 1.15;         // settling is a touch brisker than the performance
   var REST_CUES = [0, 2.167, 3.125]; // s: where his pose matches the rest pose (and the clip's end)
   var GLANCE_HOLD = 1.17;         // s: beat one, looking toward the text
+  var BEAT_ONE_END = REST_CUES[1]; // s: beat one has turned back to rest
   var CLICK_HOLD_MS = 1400;       // keep looking while the history panel arrives
   var SEEK_SAFETY_MS = 800;
+  var RUN_SAFETY_MS = 400;        // beyond a run's expected length, if playback stalls
   var GLANCE_LINKS = '.history-link, .archive-link';
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -54,6 +56,13 @@ function initIllustrationHover() {
     var intentTimer = 0;
     var linkTimer = 0;
     var clickHold = 0;
+    var currentLink = null;       // the glance link under the pointer (or focused)
+
+    // Still on a glance link? (Clicking "project history" swaps the link out
+    // without a pointerout, so a detached link doesn't count.)
+    function overLink() {
+      return !!(currentLink && currentLink.isConnected);
+    }
 
     function D() {
       return (fwd.duration && isFinite(fwd.duration)) ? fwd.duration : 5.04;
@@ -107,18 +116,33 @@ function initIllustrationHover() {
       }
     }
 
-    // Play `video` until it reaches time `target` (frame-accurate), then `done`
+    // Play `video` until it reaches time `target` (frame-accurate), then `done`.
+    // The per-frame check alone isn't enough: a frame callback fires at the
+    // start of each frame, and once the clip reaches its end no new frame is
+    // presented, so a run to the very end would never see itself arrive (and
+    // he'd be stuck mid-settle, ignoring every glance after). 'ended', a
+    // rejected play() and a stall timer all finish the run too.
     function runTo(video, target, rate, done) {
       var my = token;
+      var finished = false;
+      var net = 0;
+      function finish() {
+        if (finished) return;
+        finished = true;
+        clearTimeout(net);
+        video.removeEventListener('ended', finish);
+        if (my !== token) return; // superseded: the video belongs to a newer run
+        video.pause();
+        done();
+      }
+      var remainingMs = Math.max(0, target - video.currentTime) / rate * 1000;
+      net = setTimeout(finish, remainingMs + RUN_SAFETY_MS);
+      video.addEventListener('ended', finish);
       video.playbackRate = rate;
-      video.play().catch(function () {});
+      video.play().catch(finish);
       (function check() {
-        if (my !== token) return;
-        if (video.ended || video.currentTime >= target - 0.01) {
-          video.pause();
-          done();
-          return;
-        }
+        if (finished || my !== token) return;
+        if (video.ended || video.currentTime >= target - 0.01) return finish();
         nextFrame(video, check);
       })();
     }
@@ -136,6 +160,8 @@ function initIllustrationHover() {
       state = 'rest';
       var parked = shown === fwd ? rev : fwd;
       show(parked, parked === fwd ? 0 : D());
+      // A link was hovered while he was finishing another beat: look now
+      if (overLink()) glance();
     }
 
     // The shortest way to the nearest rest pose, forward or back
@@ -159,13 +185,27 @@ function initIllustrationHover() {
       }
     }
 
-    // Beat one, held: he looks toward the link
+    // Beat one, held: he looks toward the link. From rest, or part-way
+    // through turning back from an earlier glance (he turns to look again,
+    // from wherever he is). Mid-way through another beat, he finishes it
+    // first (rest() picks the glance up).
     function glance() {
-      if (state !== 'rest' || reduced.matches || !box.isConnected) return;
-      if (!ready()) return loadIllustrationVideos();
+      if (reduced.matches || !box.isConnected) return;
+      if (state === 'playing' || state === 'glancing') return;
+      if (!ready()) {
+        loadIllustrationVideos();
+        fwd.addEventListener('canplay', function () { if (overLink() && ready()) glance(); }, { once: true });
+        return;
+      }
+      var t = state === 'rest' ? 0 : now();
+      if (t > BEAT_ONE_END) return; // settling through a later beat
       state = 'glancing';
-      fwd.loop = false;
-      show(fwd, 0, function () { runTo(fwd, GLANCE_HOLD, 1, function () {}); });
+      if (t <= GLANCE_HOLD) {
+        fwd.loop = false;
+        show(fwd, t, function () { runTo(fwd, GLANCE_HOLD, 1, function () {}); });
+      } else {
+        show(rev, D() - t, function () { runTo(rev, D() - GLANCE_HOLD, 1, function () {}); });
+      }
     }
 
     function unglance() {
@@ -195,13 +235,16 @@ function initIllustrationHover() {
       return e.target && e.target.closest ? e.target.closest(GLANCE_LINKS) : null;
     }
     function onLinkEnter(e) {
-      if (!linkFrom(e)) return;
+      var link = linkFrom(e);
+      if (!link || link === currentLink) return; // moving between its text and icon
+      currentLink = link;
       clearTimeout(linkTimer);
       linkTimer = setTimeout(glance, LINK_INTENT_MS);
     }
     function onLinkLeave(e) {
       var link = linkFrom(e);
       if (!link || link.contains(e.relatedTarget)) return;
+      currentLink = null;
       clearTimeout(linkTimer);
       unglance();
     }
