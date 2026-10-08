@@ -9,27 +9,27 @@
   <link rel="canonical" href="https://appppe.com/history.html">
 
   <!-- Mark JS as available so the reveal-on-load hidden states apply (and content
-       stays visible if JS is off). Failsafe shows everything if main.js never runs. -->
+       stays visible if JS is off). A tab that has already played the intro gets
+       the short version. Failsafe shows everything if main.js never runs. -->
   <script>
     document.documentElement.classList.add('js');
-    addEventListener('load', function () {
+    try { if (sessionStorage.getItem('appe:intro')) document.documentElement.classList.add('intro-quick'); } catch (e) {}
+    addEventListener('DOMContentLoaded', function () {
       setTimeout(function () {
         if (window.__revealedOnce) return;
         document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient').forEach(function (el) { el.classList.add('in'); });
-      }, 1200);
+      }, 2000);
     });
   </script>
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 
-  <!-- Fonts (Gantari 600 for the panel labels; IBM Plex Mono 400 for the years) -->
+  <!-- Fonts (Ruder Plakat for the name; Gantari 600 for the panel labels; IBM Plex Mono 400 for the years) -->
+  <link rel="preload" href="assets/fonts/RuderPlakatMaxiLLTT-Regular.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 
-  <!-- Preload illustration idle + reverse videos for instant hover play / rewind -->
-  <link rel="preload" href="assets/videos/illustration-idle.mp4" as="video">
-  <link rel="preload" href="assets/videos/illustration-idle-reverse.mp4" as="video">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="styles/tokens.css">
@@ -47,10 +47,10 @@
     </div>
 
     <div class="illustration rv-fade" style="--i:1">
-      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="auto" aria-label="Hand-drawn illustration of a man in a suit">
+      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="none" aria-label="Hand-drawn illustration of a man in a suit">
         <source src="assets/videos/illustration-idle.mp4" type="video/mp4">
       </video>
-      <video class="illustration-rev" muted playsinline preload="auto" aria-hidden="true">
+      <video class="illustration-rev" muted playsinline preload="none" aria-hidden="true">
         <source src="assets/videos/illustration-idle-reverse.mp4" type="video/mp4">
       </video>
     </div>
@@ -251,6 +251,7 @@
     </section>
   </div>
 
+  <script src="scripts/motion.js"></script>
   <script src="scripts/main.js"></script>
   <script src="scripts/history.js"></script>
   <script src="scripts/page-transition.js"></script>

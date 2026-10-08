@@ -10,14 +10,16 @@
   <link rel="canonical" href="https://appppe.com/">
 
   <!-- Mark JS as available so the reveal-on-load hidden states apply (and content
-       stays visible if JS is off). Failsafe shows everything if main.js never runs. -->
+       stays visible if JS is off). A tab that has already played the intro gets
+       the short version. Failsafe shows everything if main.js never runs. -->
   <script>
     document.documentElement.classList.add('js');
-    addEventListener('load', function () {
+    try { if (sessionStorage.getItem('appe:intro')) document.documentElement.classList.add('intro-quick'); } catch (e) {}
+    addEventListener('DOMContentLoaded', function () {
       setTimeout(function () {
         if (window.__revealedOnce) return;
         document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient').forEach(function (el) { el.classList.add('in'); });
-      }, 1200);
+      }, 2000);
     });
   </script>
 
@@ -33,9 +35,6 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap">
   <!-- Ruder Plakat Maxi LL is loaded via @font-face in tokens.css -->
 
-  <!-- Preload illustration idle + reverse videos for instant hover play / rewind -->
-  <link rel="preload" href="assets/videos/illustration-idle.mp4" as="video">
-  <link rel="preload" href="assets/videos/illustration-idle-reverse.mp4" as="video">
 
   <!-- Who this page is about, for search engines. The archive at
        archive.appppe.com emits the same Person; the sameAs lists tie the two
@@ -88,10 +87,10 @@
     </div>
 
     <div class="illustration rv-fade" style="--i:1">
-      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="auto" aria-label="Hand-drawn illustration of a man in a suit">
+      <video class="illustration-fwd" poster="assets/images/illustration.png" muted loop playsinline preload="none" aria-label="Hand-drawn illustration of a man in a suit">
         <source src="assets/videos/illustration-idle.mp4" type="video/mp4">
       </video>
-      <video class="illustration-rev" muted playsinline preload="auto" aria-hidden="true">
+      <video class="illustration-rev" muted playsinline preload="none" aria-hidden="true">
         <source src="assets/videos/illustration-idle-reverse.mp4" type="video/mp4">
       </video>
     </div>
@@ -129,6 +128,7 @@
   </div>
   
   <!-- Future: Progressive enhancement scripts will go here -->
+  <script src="scripts/motion.js"></script>
   <script src="scripts/main.js"></script>
   <script src="scripts/page-transition.js"></script>
 </body>
