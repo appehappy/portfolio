@@ -31,6 +31,7 @@ portfolio/
 │   ├── history.css         # Project history panel, list, expanded rows
 │   └── page-transition.css # In-page fades between home / writing / history
 ├── scripts/
+│   ├── motion.js           # Shared motion clock: reads the tokens, wraps the Web Animations API
 │   ├── main.js             # Layout alignment, illustration hover, reveal-on-load
 │   ├── writing.js          # Article list + content
 │   ├── history.js          # Project expand/collapse (one open at a time)
@@ -38,6 +39,7 @@ portfolio/
 ├── assets/
 │   ├── images/             # Images and illustrations
 │   ├── images/projects/    # Project history imagery
+│   ├── videos/             # Illustration clips (encoding recipe in its README)
 │   └── fonts/              # Web fonts (Ruder Plakat Maxi LL)
 ├── data/                   # Future: JSON feeds for BlueSky, Substack
 ├── README.md               # This file

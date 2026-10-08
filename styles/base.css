@@ -42,15 +42,79 @@ p:last-child {
   margin-bottom: 0;
 }
 
-/* Links */
+/* Links: hover comes in fast and leaves slowly */
 a {
   color: var(--color-link);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--dur-3) var(--ease-out);
 }
 
 a:hover {
   color: var(--color-link-hover);
+  transition-duration: var(--dur-1);
+}
+
+/* Page links (not article prose) get a hairline that rules in left to right
+   on hover or keyboard focus and leaves off to the right, in the same
+   ruled-line language as the gridlines and the history panel */
+.column a,
+.intro-text a,
+.lower-text a,
+.history-close {
+  position: relative;
+}
+
+.column a::after,
+.intro-text a::after,
+.lower-text a::after,
+.history-close::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform var(--dur-3) var(--ease-in-out);
+}
+
+/* Links that end in an icon: the rule stops at the text */
+.archive-link::after,
+.history-link::after {
+  right: 16px;
+}
+
+.column a:focus-visible::after,
+.intro-text a:focus-visible::after,
+.lower-text a:focus-visible::after,
+.history-close:focus-visible::after {
+  transform: none;
+  transform-origin: 0 50%;
+  transition: transform var(--dur-4) var(--ease-out-expo);
+}
+
+@media (hover: hover) {
+  .column a:hover::after,
+  .intro-text a:hover::after,
+  .lower-text a:hover::after,
+  .history-close:hover::after {
+    transform: none;
+    transform-origin: 0 50%;
+    transition: transform var(--dur-4) var(--ease-out-expo);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .column a::after,
+  .intro-text a::after,
+  .lower-text a::after,
+  .history-close::after {
+    transition: none !important;
+  }
 }
 
 /* Images */

@@ -114,11 +114,12 @@
   background: none;
   border: 0;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color var(--dur-3) var(--ease-out);
 }
 
 .history-close:hover {
   color: var(--color-link-hover);
+  transition-duration: var(--dur-1);
 }
 
 /* List: fills the rest of the card and scrolls (custom scrollbar from base.css) */
