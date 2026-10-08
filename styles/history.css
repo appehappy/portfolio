@@ -127,14 +127,35 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  /* history.js drives the scroll in step with the rows; the browser's own
+     scroll anchoring would fight it while rows change height */
+  overflow-anchor: none;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
+/* Applying a state instantly (initial open, measuring where a scroll should
+   land): every transition in the list is off for that one style update */
+.history-list.is-instant,
+.history-list.is-instant * {
+  transition: none !important;
+}
+
+/* Row timing, inherited by the body track and the icon:
+   --track-*  opening is quick to respond (ease-out); closing eases both ends
+   --hover-dur  hover comes in fast and leaves slowly */
 .history-item {
+  --track-dur: 300ms;
+  --track-ease: var(--ease-in-out);
+  --hover-dur: var(--dur-3);
   border-bottom: 1px solid var(--color-gridline);
-  transition: background-color 0.2s ease;
+  transition: background-color var(--hover-dur) var(--ease-out);
+}
+
+.history-item.is-open {
+  --track-dur: var(--dur-4);
+  --track-ease: var(--ease-out);
 }
 
 /* Row: the whole row is the expand/collapse control */
@@ -151,6 +172,7 @@
   font: inherit;
   color: inherit;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .history-item-toggle:focus-visible {
@@ -166,7 +188,7 @@
   font-weight: 400;
   line-height: 18px;
   color: var(--color-text-muted);
-  transition: color 0.2s ease;
+  transition: color var(--hover-dur) var(--ease-out);
 }
 
 .history-meta {
@@ -184,12 +206,12 @@
 
 .history-brand {
   color: var(--color-text-muted);
-  transition: color 0.2s ease;
+  transition: color var(--hover-dur) var(--ease-out);
 }
 
 .history-title {
   color: var(--color-text);
-  transition: color 0.2s ease;
+  transition: color var(--hover-dur) var(--ease-out);
 }
 
 /* Plus icon; rotates into a close "x" when the row is open */
@@ -198,22 +220,27 @@
   width: 18px;
   height: 18px;
   color: var(--color-text-muted);
-  transition: color 0.2s ease, transform 0.35s var(--ease-reveal);
+  /* The rotation shares the body track's clock */
+  transition: color var(--hover-dur) var(--ease-out), transform var(--track-dur) var(--track-ease);
 }
 
-/* Hover (Figma: row goes cream, years/brand darken, title + plus go green) */
-.history-item:has(.history-item-toggle:hover) {
-  background: var(--color-bg-page);
-}
+/* Hover (Figma: row goes cream, years/brand darken, title + plus go green).
+   Pointer devices only, so a tap doesn't leave a row stuck in hover. */
+@media (hover: hover) {
+  .history-item:has(.history-item-toggle:hover) {
+    --hover-dur: var(--dur-1);
+    background: var(--color-bg-page);
+  }
 
-.history-item-toggle:hover .history-years,
-.history-item-toggle:hover .history-brand {
-  color: var(--color-text-muted-strong);
-}
+  .history-item-toggle:hover .history-years,
+  .history-item-toggle:hover .history-brand {
+    color: var(--color-text-muted-strong);
+  }
 
-.history-item-toggle:hover .history-title,
-.history-item-toggle:hover .history-icon {
-  color: var(--color-link);
+  .history-item-toggle:hover .history-title,
+  .history-item-toggle:hover .history-icon {
+    color: var(--color-link);
+  }
 }
 
 /* Expanded (Figma: cream row, years at full ink, plus becomes an "x") */
@@ -230,15 +257,17 @@
   transform: rotate(45deg);
 }
 
-.history-item.is-open .history-item-toggle:hover .history-icon {
-  color: var(--color-link);
+@media (hover: hover) {
+  .history-item.is-open .history-item-toggle:hover .history-icon {
+    color: var(--color-link);
+  }
 }
 
 /* Body: height animates via a 0fr -> 1fr grid track; the inner element clips */
 .history-body {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.45s var(--ease-reveal);
+  transition: grid-template-rows var(--track-dur) var(--track-ease);
 }
 
 .history-item.is-open .history-body {
@@ -258,6 +287,22 @@
   padding: 0 32px 24px;
 }
 
+/* The content never gets sliced by the moving edge. Opening, it waits for
+   the track to get ahead, then fades in and rises; closing, it fades out
+   fast, before the edge reaches it (and resets its rise once invisible). */
+.history-body-content {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 120ms var(--ease-in), transform 0s linear 120ms;
+}
+
+.history-item.is-open .history-body-content {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--dur-3) var(--ease-out) 100ms,
+              transform var(--dur-6) var(--ease-out-expo) 100ms;
+}
+
 /* Gallery image (Figma: 695 x 391) */
 .history-gallery {
   position: relative;
@@ -265,6 +310,9 @@
   width: 100%;
   aspect-ratio: 695 / 391;
   overflow: hidden;
+  /* Opening: unmasks top to bottom while the image settles into it */
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0s linear 120ms;
 }
 
 .history-gallery img {
@@ -272,6 +320,18 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.03);
+  transition: transform 0s linear 120ms;
+}
+
+.history-item.is-open .history-gallery {
+  clip-path: inset(0);
+  transition: clip-path var(--dur-6) var(--ease-out-expo) 100ms;
+}
+
+.history-item.is-open .history-gallery img {
+  transform: none;
+  transition: transform var(--dur-7) var(--ease-out-expo) 100ms;
 }
 
 /* Description (Figma: 12px between paragraphs) */
@@ -294,8 +354,25 @@
 @media (prefers-reduced-motion: reduce) {
   .history-body,
   .history-icon,
-  .history-item {
+  .history-item,
+  .history-gallery,
+  .history-gallery img,
+  .history-item.is-open .history-gallery,
+  .history-item.is-open .history-gallery img {
     transition: none;
+  }
+
+  /* Content crossfades in place */
+  .history-body-content,
+  .history-item.is-open .history-body-content {
+    transform: none;
+    transition: opacity 160ms linear;
+  }
+
+  .history-gallery,
+  .history-gallery img {
+    clip-path: none;
+    transform: none;
   }
 }
 
