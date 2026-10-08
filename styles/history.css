@@ -10,11 +10,13 @@
 /* The name stays in the top-left but recedes to the gridline tint (Figma). The
    colour transition lives on .page-content in layout.css. */
 .history-page .page-content {
-  color: var(--color-gridline);
+  color: var(--color-name-receded);
 }
 
 /* Panel: cream, with a hairline above and below. It sits on top of the center
-   gridline, which is why it needs its own background. */
+   gridline, which is why it needs its own ground. The hairlines and ground are
+   pseudo-elements so the entrance can draw one and fade the other
+   (page-transition.js); the transparent borders only hold the hairlines' space. */
 .history-panel {
   position: absolute;
   top: 32px;
@@ -22,9 +24,35 @@
   left: calc(25% + 1px); /* just right of the first gridline */
   right: 25%;            /* just left of the third gridline */
   z-index: 2;
-  background: var(--color-bg-page);
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+
+/* On a direct load, hidden until the intro starts (and plays its entrance) */
+.js:not(.intro-started) .history-panel {
+  opacity: 0;
+}
+
+/* Hairlines: one box spanning both borders, ruled left to right from the
+   first gridline on entrance */
+.history-panel::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0;
+  pointer-events: none;
   border-top: 1px solid var(--color-gridline);
   border-bottom: 1px solid var(--color-gridline);
+  transform-origin: 0 50%;
+}
+
+/* Ground */
+.history-panel::after {
+  content: '';
+  position: absolute;
+  inset: -1px 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--color-bg-page);
 }
 
 /* Card: fixed to the panel's inset, so the list has a fixed height to scroll in */
@@ -289,6 +317,14 @@
   .history-panel {
     inset: 0;
     border: 0;
+  }
+
+  .history-panel::before {
+    display: none;
+  }
+
+  .history-panel::after {
+    inset: 0;
   }
 
   .history-card {

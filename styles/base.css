@@ -172,7 +172,6 @@ img {
 .column-bio { --d: 380ms; }
 .column-writing { --d: 440ms; }
 .column-soon { --d: 500ms; }
-.history-panel { --d: 380ms; }
 .peek { --d: 760ms; }
 .peek-gradient { --d: 880ms; }
 

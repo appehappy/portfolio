@@ -17,6 +17,7 @@
     addEventListener('DOMContentLoaded', function () {
       setTimeout(function () {
         if (window.__revealedOnce) return;
+        document.documentElement.classList.add('intro-started');
         document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient, .gridlines').forEach(function (el) { el.classList.add('in'); });
       }, 2000);
     });
@@ -73,7 +74,7 @@
     <!-- Project history: a panel spanning the two middle columns, holding a
          fixed-height card. The list scrolls inside the card; one project can
          be expanded at a time (history.js). -->
-    <section class="history-panel rv-fade" style="--i:0" aria-labelledby="history-heading">
+    <section class="history-panel" aria-labelledby="history-heading">
       <div class="history-card">
         <header class="history-header">
           <h1 class="history-heading" id="history-heading">Project history</h1>

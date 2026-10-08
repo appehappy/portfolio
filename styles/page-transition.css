@@ -5,11 +5,14 @@
  * Logo and illustration (left) stay static; only main content areas fade.
  */
 
+/* Home <-> writing (body swap). Home <-> history is choreographed in
+   page-transition.js instead and only uses the name recolour below. */
+
 /* Fade out: home – text columns, grid, and leftmost gridline (logo + illustration stay visible) */
 .page-frame.page-transition-out .text-columns,
 .page-frame.page-transition-out .grid-field {
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity var(--dur-2) var(--ease-in);
 }
 
 /* Home -> writing: the leftmost gridline fades out (no movement), quickly, so
@@ -23,25 +26,19 @@
 .page-frame.page-transition-out .article-list-container,
 .page-frame.page-transition-out .article-content {
   opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-/* Fade out: project history – only the panel (illustration + peek stay visible) */
-.page-frame.page-transition-out .history-panel {
-  opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity var(--dur-2) var(--ease-in);
 }
 
 /* Home <-> project history: the name recolours from the moment of the click,
-   alongside the outgoing content's fade (transition on .page-content in
+   alongside the outgoing content's exit (transition on .page-content in
    layout.css). The direction class, set by page-transition.js, wins over the
    page-level colour until cleanup. */
 .page-frame.page-transition-to-history .page-content {
-  color: var(--color-gridline);
+  color: var(--color-name-receded);
 }
 
 .page-frame.page-transition-to-home .page-content {
-  color: var(--color-text);
+  color: var(--color-name-ink);
 }
 
 /* Fade in: only main content areas (logo + illustration stay at full opacity) */
@@ -49,15 +46,13 @@
 .page-frame.page-transition-in .text-columns,
 .page-frame.page-transition-in .grid-field,
 .page-frame.page-transition-in .article-list-container,
-.page-frame.page-transition-in .article-content,
-.page-frame.page-transition-in .history-panel {
+.page-frame.page-transition-in .article-content {
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity var(--dur-3) var(--ease-out);
 }
 
 .page-frame.page-transition-in.page-transition-in-visible .text-columns,
-.page-frame.page-transition-in.page-transition-in-visible .grid-field,
-.page-frame.page-transition-in.page-transition-in-visible .history-panel {
+.page-frame.page-transition-in.page-transition-in-visible .grid-field {
   opacity: 1;
 }
 
@@ -66,11 +61,9 @@
 .page-frame.page-transition-out .grid-field,
 .page-frame.page-transition-out .article-list-container,
 .page-frame.page-transition-out .article-content,
-.page-frame.page-transition-out .history-panel,
 .page-frame.page-transition-in .text-columns,
 .page-frame.page-transition-in .grid-field,
 .page-frame.page-transition-in .article-list-container,
-.page-frame.page-transition-in .article-content,
-.page-frame.page-transition-in .history-panel {
+.page-frame.page-transition-in .article-content {
   will-change: opacity;
 }

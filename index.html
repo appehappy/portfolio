@@ -18,6 +18,7 @@
     addEventListener('DOMContentLoaded', function () {
       setTimeout(function () {
         if (window.__revealedOnce) return;
+        document.documentElement.classList.add('intro-started');
         document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient, .gridlines').forEach(function (el) { el.classList.add('in'); });
       }, 2000);
     });

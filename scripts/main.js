@@ -144,6 +144,7 @@ function initReveal() {
   // skip the staggered reveal and just show everything — the page transition's
   // own fade provides the motion, and a second cascade would feel busy.
   if (window.__revealedOnce) {
+    document.documentElement.classList.add('intro-started');
     els.forEach(function (el) { el.classList.add('in'); });
     scheduleIllustrationLoad();
     return;
@@ -173,6 +174,13 @@ function initReveal() {
   var body = fontsReady(['400 14px Gantari'], INTRO_FONT_CAP_MS);
   var name = fontsReady(['128px "Ruder Plakat Maxi LL"'], NAME_FONT_CAP_MS);
   body.then(function () {
+    // Choreographed parts of the intro (the history panel, page-transition.js)
+    // start from this moment
+    var root = document.documentElement;
+    root.classList.add('intro-started');
+    document.dispatchEvent(new CustomEvent('appe:intro', {
+      detail: { quick: root.classList.contains('intro-quick') }
+    }));
     observe(otherEls);
     scheduleIllustrationLoad();
   });

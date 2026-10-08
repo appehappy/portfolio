@@ -33,6 +33,11 @@
     return /ms$/.test(v) ? n : /s$/.test(v) ? n * 1000 : n;
   }
 
+  /* 'rise-1' -> 6 */
+  function px(name) {
+    return parseFloat(token(name)) || 0;
+  }
+
   /* 'ease-out' -> the token's cubic-bezier(); anything else passes through.
      The token names deliberately shadow the CSS keywords of the same name. */
   function easing(v) {
@@ -125,6 +130,18 @@
     });
   }
 
+  /* The site's entrance: fade in quickly while rising slowly into place, so
+     nothing looks ghosted as it settles. opts: delay, rise (token name or px,
+     default 'rise-1'). Returns [opacity, transform] animations. */
+  function rise(el, opts) {
+    opts = opts || {};
+    var distance = typeof opts.rise === 'number' ? opts.rise : px(opts.rise || 'rise-1');
+    return [
+      animate(el, [{ opacity: 0 }, { opacity: 1 }], { duration: 'dur-3', easing: 'ease-out', delay: opts.delay }),
+      animate(el, [{ transform: 'translateY(' + distance + 'px)' }, { transform: 'none' }], { duration: 'dur-6', easing: 'ease-out-expo', delay: opts.delay })
+    ];
+  }
+
   /* Resolves once every animation has finished or been cancelled */
   function all(anims) {
     return Promise.all((anims || []).filter(Boolean).map(function (a) {
@@ -136,14 +153,24 @@
     (anims || []).forEach(function (a) { if (a) a.cancel(); });
   }
 
+  /* Freeze animations where they are. A paused animation keeps applying its
+     current value, so an exit started with an implicit "from" keyframe picks
+     up exactly there: interrupting a sequence never snaps. */
+  function pause(anims) {
+    (anims || []).forEach(function (a) { if (a && a.playState === 'running') a.pause(); });
+  }
+
   window.Motion = {
     ms: ms,
+    px: px,
     easing: easing,
     curve: curve,
     reduced: reduced,
     animate: animate,
     stagger: stagger,
+    rise: rise,
     all: all,
-    cancel: cancel
+    cancel: cancel,
+    pause: pause
   };
 })();

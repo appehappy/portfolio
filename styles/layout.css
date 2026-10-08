@@ -46,12 +46,14 @@
 }
 
 /* Page Content - Contains title/logo; above illustration when window is short.
-   Owns the name's colour so it can cross-fade between pages (history.css mutes it). */
+   Owns the name's colour so it can cross-fade between pages (history.css mutes
+   it). The recolour is the biggest change on screen, so it takes its time: it
+   is still settling as the other page's content arrives. */
 .page-content {
   position: relative;
   z-index: 2;
-  color: var(--color-text);
-  transition: color 0.25s ease; /* same clock as the page-transition fades */
+  color: var(--color-name-ink);
+  transition: color var(--dur-5) var(--ease-in-out);
 }
 
 @media (prefers-reduced-motion: reduce) {
