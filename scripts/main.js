@@ -13,82 +13,215 @@ function alignTextToIllustration() {
   positionTextColumns(container, textColumns);
 }
 
-// Illustration video: play forward on hover; on leave, rewind via a reversed
-// clip back to the start pose, then rest there. Forward time t and reverse time
-// (D - t) show the same frame, so swaps between the two layers are instant and
-// seamless (no crossfade, which would double the multiply-blended line art).
+// Illustration: a hand-drawn look-around in three beats (a glance toward the
+// text, a small glance the other way, a second glance toward the text) that
+// plays while hovered. Between the beats his pose comes back to the rest pose.
+//
+// On leave he doesn't rewind through every beat (which reads as head-shaking):
+// he takes the shortest way, forward or back, to the nearest of those rest
+// moments, then rests. Going forward is follow-through: he finishes the look
+// rather than reversing out of it.
+//
+// Hovering a link in the columns makes him glance at it (beat one, held while
+// the pointer is there); clicking "project history" keeps him looking while
+// the panel rules out.
+//
+// Forward (.illustration-fwd) and reversed (.illustration-rev) copies of the
+// clip share the box: forward time t and reverse time D - t are the same
+// frame, so swapping layers at matched frames is seamless (no crossfade, which
+// would double the multiply-blended line art). Whichever layer is hidden waits
+// parked on the rest pose, so coming to rest is an instant swap.
 function initIllustrationHover() {
-  var REWIND_RATE = 1.75; // how fast the rewind plays back (tunable)
+  var INTENT_MS = 60;             // a cursor passing over doesn't wake him
+  var LINK_INTENT_MS = 150;
+  var SETTLE_RATE = 1.15;         // settling is a touch brisker than the performance
+  var REST_CUES = [0, 2.167, 3.125]; // s: where his pose matches the rest pose (and the clip's end)
+  var GLANCE_HOLD = 1.17;         // s: beat one, looking toward the text
+  var CLICK_HOLD_MS = 1400;       // keep looking while the history panel arrives
+  var SEEK_SAFETY_MS = 800;
+  var GLANCE_LINKS = '.history-link, .archive-link';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   document.querySelectorAll('.illustration').forEach(function (box) {
     var fwd = box.querySelector('.illustration-fwd');
     var rev = box.querySelector('.illustration-rev');
-    if (!fwd || !rev) return;
+    if (!fwd || !rev || box.dataset.ready) return;
+    box.dataset.ready = '1';
 
-    var token = 0; // guards against stale reveals when hover toggles quickly
+    var state = 'rest';           // rest | playing | glancing | settling
+    var shown = fwd;              // the visible layer
+    var token = 0;                // invalidates callbacks from an earlier state
+    var intentTimer = 0;
+    var linkTimer = 0;
+    var clickHold = 0;
 
-    function duration() {
+    function D() {
       return (fwd.duration && isFinite(fwd.duration)) ? fwd.duration : 5.04;
     }
-    function clamp(t) {
-      return Math.min(Math.max(t, 0), duration());
+    function ready() {
+      return fwd.readyState >= 2 && rev.readyState >= 2;
+    }
+    // The current frame, on the forward clock, whichever layer is showing
+    function now() {
+      return shown === fwd ? fwd.currentTime : Math.max(0, D() - rev.currentTime);
+    }
+    function nextFrame(video, fn) {
+      if ('requestVideoFrameCallback' in video) video.requestVideoFrameCallback(fn);
+      else requestAnimationFrame(fn);
     }
 
-    // Reveal `to` (seeked to targetTime) and hide `from`, but only once `to` has
-    // actually decoded the target frame — otherwise it flashes a stale frame
-    // during the seek. `from` stays visible (frozen) until then; since
-    // forward(t) and reverse(D - t) are the same frame, the swap is invisible.
-    function swapTo(to, from, targetTime, onReady) {
+    // Hidden layers wait on the rest pose: forward's first frame, reverse's last
+    function park(video) {
+      video.pause();
+      var t = video === fwd ? 0 : D();
+      if (video.seeking || Math.abs(video.currentTime - t) > 0.02) video.currentTime = t;
+    }
+    rev.addEventListener('loadeddata', function () { if (shown !== rev) park(rev); });
+
+    // Show `to` at its time t, but only once that frame has decoded (otherwise
+    // it flashes a stale frame mid-seek); the other layer stays visible,
+    // frozen, until then, then parks.
+    function show(to, t, then) {
       var my = ++token;
+      var from = to === fwd ? rev : fwd;
       from.pause();
-      var done = false;
       function reveal() {
-        if (done) return;
-        done = true;
-        to.removeEventListener('seeked', onSeeked);
-        clearTimeout(fallback);
         if (my !== token) return; // superseded by a newer interaction
         to.style.opacity = '1';
         from.style.opacity = '0';
-        onReady();
+        shown = to;
+        park(from);
+        if (then) then();
       }
-      function onSeeked() { requestAnimationFrame(reveal); }
-      var fallback = setTimeout(reveal, 150); // safety net if 'seeked' never fires
-      if (Math.abs(to.currentTime - targetTime) < 0.02) {
-        requestAnimationFrame(reveal); // already on the frame
+      if (!to.seeking && Math.abs(to.currentTime - t) < 0.02) {
+        reveal();
       } else {
-        to.addEventListener('seeked', onSeeked);
-        to.currentTime = targetTime;
+        // Seeks land within a frame or two (a keyframe every 12 frames); the
+        // timer only rescues a seek that never completes
+        var net = setTimeout(reveal, SEEK_SAFETY_MS);
+        to.addEventListener('seeked', function () {
+          clearTimeout(net);
+          requestAnimationFrame(reveal);
+        }, { once: true });
+        if (Math.abs(to.currentTime - t) >= 0.02) to.currentTime = t;
       }
     }
 
-    function playForward() {
-      var D = duration();
-      // If reverse is the visible layer, pick up forward from the mirrored time.
-      var target = (rev.style.opacity === '1') ? clamp(D - rev.currentTime) : fwd.currentTime;
-      swapTo(fwd, rev, target, function () { fwd.play().catch(function () {}); });
+    // Play `video` until it reaches time `target` (frame-accurate), then `done`
+    function runTo(video, target, rate, done) {
+      var my = token;
+      video.playbackRate = rate;
+      video.play().catch(function () {});
+      (function check() {
+        if (my !== token) return;
+        if (video.ended || video.currentTime >= target - 0.01) {
+          video.pause();
+          done();
+          return;
+        }
+        nextFrame(video, check);
+      })();
     }
 
-    function playReverse() {
-      var D = duration();
-      // Rewind clip not loaded yet (a hover in the first moments of a visit):
-      // go straight back to the start pose rather than swap to an empty layer.
-      if (rev.readyState < 2) {
-        fwd.pause();
-        fwd.currentTime = 0;
-        return;
+    function play() {
+      state = 'playing';
+      fwd.loop = true;
+      show(fwd, now(), function () {
+        fwd.playbackRate = 1;
+        fwd.play().catch(function () {});
+      });
+    }
+
+    function rest() {
+      state = 'rest';
+      var parked = shown === fwd ? rev : fwd;
+      show(parked, parked === fwd ? 0 : D());
+    }
+
+    // The shortest way to the nearest rest pose, forward or back
+    function settle() {
+      if (state === 'rest' || state === 'settling') return;
+      state = 'settling';
+      var t = now();
+      var end = D();
+      var back = 0;
+      var ahead = end;
+      REST_CUES.concat(end).forEach(function (cue) {
+        if (cue <= t && cue > back) back = cue;
+        if (cue >= t && cue < ahead) ahead = cue;
+      });
+      if (Math.min(t - back, ahead - t) < 0.03) return rest();
+      if (ahead - t <= t - back) {
+        fwd.loop = false;
+        show(fwd, t, function () { runTo(fwd, ahead, SETTLE_RATE, rest); });
+      } else {
+        show(rev, end - t, function () { runTo(rev, end - back, SETTLE_RATE, rest); });
       }
-      rev.playbackRate = REWIND_RATE;
-      swapTo(rev, fwd, clamp(D - fwd.currentTime), function () { rev.play().catch(function () {}); });
     }
 
-    // Rewind finished: rest on the final frame (== forward's frame 0 / start pose).
-    rev.addEventListener('ended', function () {
-      rev.pause();
+    // Beat one, held: he looks toward the link
+    function glance() {
+      if (state !== 'rest' || reduced.matches || !box.isConnected) return;
+      if (!ready()) return loadIllustrationVideos();
+      state = 'glancing';
+      fwd.loop = false;
+      show(fwd, 0, function () { runTo(fwd, GLANCE_HOLD, 1, function () {}); });
+    }
+
+    function unglance() {
+      if (state === 'glancing' && !clickHold) settle();
+    }
+
+    box.addEventListener('mouseenter', function () {
+      if (reduced.matches) return;
+      clearTimeout(intentTimer);
+      intentTimer = setTimeout(function () {
+        if (ready()) return play();
+        // Not loaded yet: start when it is, if the pointer is still here
+        loadIllustrationVideos();
+        fwd.addEventListener('canplay', function () {
+          if (box.matches(':hover') && ready()) play();
+        }, { once: true });
+      }, INTENT_MS);
     });
 
-    box.addEventListener('mouseenter', playForward);
-    box.addEventListener('mouseleave', playReverse);
+    box.addEventListener('mouseleave', function () {
+      clearTimeout(intentTimer);
+      if (state === 'playing') settle();
+    });
+
+    // Link glances, delegated so they survive the home <-> history swap
+    function linkFrom(e) {
+      return e.target && e.target.closest ? e.target.closest(GLANCE_LINKS) : null;
+    }
+    function onLinkEnter(e) {
+      if (!linkFrom(e)) return;
+      clearTimeout(linkTimer);
+      linkTimer = setTimeout(glance, LINK_INTENT_MS);
+    }
+    function onLinkLeave(e) {
+      var link = linkFrom(e);
+      if (!link || link.contains(e.relatedTarget)) return;
+      clearTimeout(linkTimer);
+      unglance();
+    }
+    document.addEventListener('pointerover', onLinkEnter);
+    document.addEventListener('focusin', onLinkEnter);
+    document.addEventListener('pointerout', onLinkLeave);
+    document.addEventListener('focusout', onLinkLeave);
+    document.addEventListener('click', function (e) {
+      var link = linkFrom(e);
+      if (!link || !link.classList.contains('history-link')) return;
+      // The link is about to be swapped out (no pointerout will follow): keep
+      // looking while the panel arrives, then turn back
+      clearTimeout(linkTimer);
+      glance();
+      clearTimeout(clickHold);
+      clickHold = setTimeout(function () {
+        clickHold = 0;
+        unglance();
+      }, CLICK_HOLD_MS);
+    });
   });
 }
 

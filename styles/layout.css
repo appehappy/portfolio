@@ -184,7 +184,8 @@
 .illustration video {
   position: absolute;
   inset: 0;
-  cursor: pointer;
+  /* Hovering plays him; there's nothing to click, so no pointer cursor */
+  cursor: default;
   /* White video background multiplies down to the box's page-color background,
      guaranteeing the illustration never shows a background lighter than the page */
   mix-blend-mode: multiply;
