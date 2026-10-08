@@ -86,26 +86,30 @@ img {
 
 /* ---------------------------------------------------------------------------
    Reveal-on-load
-   Elements fade (and nudge) into place once, when they enter the viewport.
+   Elements fade (and rise) into place once, when they enter the viewport.
    Above-the-fold elements reveal immediately on load (the observer fires for
    already-visible elements). Scoped to .js so content is fully visible if
    JavaScript is unavailable. One-shot — does not reverse on scroll.
+
+   Opacity is short and the rise is long, so nothing looks ghosted while it
+   settles. Each element's start time is --d (the desktop intro timeline
+   below) or, failing that, a stagger on --i.
 --------------------------------------------------------------------------- */
 
-/* Fade + translate-up variant */
+/* Fade + rise variant. Rise distance scales with mass (--rise). */
 .js .rv {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.7s var(--ease-reveal), transform 0.7s var(--ease-reveal);
-  transition-delay: calc(0.12s + var(--i, 0) * 0.08s); /* 120ms base + 80ms/step stagger */
+  transform: translateY(var(--rise, var(--rise-1)));
+  transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-6) var(--ease-out-expo);
+  transition-delay: var(--d, calc(120ms + var(--i, 0) * var(--stagger)));
 }
 
 /* Fade-only variant (for elements whose layout position is measured by JS, so
    they must not be transformed — e.g. the desktop illustration) */
 .js .rv-fade {
   opacity: 0;
-  transition: opacity 0.7s var(--ease-reveal);
-  transition-delay: calc(0.12s + var(--i, 0) * 0.08s);
+  transition: opacity var(--dur-6) var(--ease-out);
+  transition-delay: var(--d, calc(120ms + var(--i, 0) * var(--stagger)));
 }
 
 .js .rv.in,
@@ -114,12 +118,123 @@ img {
   transform: none;
 }
 
+/* Gridlines rule in top to bottom, left to right: the sheet is ruled before
+   anything is set on it */
+.js .gridline {
+  transform: scaleY(0);
+  transition: transform var(--dur-7) var(--ease-out-expo);
+}
+
+.js .gridline--2 {
+  transition-delay: 80ms;
+}
+
+.js .gridline--3 {
+  transition-delay: 160ms;
+}
+
+.js .gridlines.in .gridline {
+  transform: none;
+}
+
+/* The peek square stamps in from its top-right corner; the gradient strip
+   then pours down out of it (its 0.24 opacity never changes) */
+.js .peek {
+  transform: scale(0);
+}
+
+.js .peek.in {
+  transform: none;
+}
+
+.js .peek-gradient {
+  clip-path: inset(0 0 100% 0);
+}
+
+.js .peek-gradient.in {
+  clip-path: inset(0);
+}
+
+/* Desktop intro timeline ("ruled, set, placed, stamped"): gridlines from 0,
+   the name line by line (then the e's, one by one), the illustration, the
+   columns left to right, the peek, the gradient. Readable by ~600ms. */
+.display-name {
+  --rise: var(--rise-2);
+}
+
+.display-name .line:nth-child(1) { --d: 120ms; }
+.display-name .line:nth-child(2) { --d: 200ms; }
+.display-name .e:nth-child(1) { --d: 235ms; }
+.display-name .e:nth-child(2) { --d: 270ms; }
+.display-name .e:nth-child(3) { --d: 305ms; }
+.display-name .e:nth-child(4) { --d: 340ms; }
+.illustration { --d: 300ms; }
+.column-bio { --d: 380ms; }
+.column-writing { --d: 440ms; }
+.column-soon { --d: 500ms; }
+.history-panel { --d: 380ms; }
+.peek { --d: 760ms; }
+.peek-gradient { --d: 880ms; }
+
+/* Mobile: the logo is the name */
+.logo {
+  --rise: var(--rise-2);
+}
+
+/* A tab that has already played the intro gets the short version: no ruling,
+   a small rise, a tight stagger (~450ms in all) */
+.js.intro-quick .gridline {
+  transform: none;
+}
+
+.js.intro-quick .rv {
+  --rise: 4px;
+  transition-duration: var(--dur-2), var(--dur-4);
+  transition-delay: calc(var(--i, 0) * 30ms);
+}
+
+.js.intro-quick .rv-fade {
+  transition-duration: var(--dur-3);
+  transition-delay: 0s;
+}
+
+.js.intro-quick .peek {
+  transition-delay: 0s;
+}
+
+.js.intro-quick .peek-gradient {
+  transition-duration: var(--dur-5);
+  transition-delay: 0s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .js .rv,
   .js .rv-fade {
     transition: opacity 0.2s !important;
     transition-delay: 0s !important;
     transform: none !important;
+  }
+
+  .js .gridline {
+    transform: none;
+    transition: none;
+  }
+
+  /* Peek and gradient fade instead of stamping and pouring */
+  .js .peek,
+  .js .peek-gradient {
+    transform: none;
+    clip-path: none;
+    opacity: 0;
+    transition: opacity 0.2s !important;
+  }
+
+  .js .peek.in {
+    opacity: 1;
+  }
+
+  .js .peek-gradient.in {
+    opacity: 0.24;
   }
 }
 

@@ -17,7 +17,7 @@
     addEventListener('DOMContentLoaded', function () {
       setTimeout(function () {
         if (window.__revealedOnce) return;
-        document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient').forEach(function (el) { el.classList.add('in'); });
+        document.querySelectorAll('.rv, .rv-fade, .peek, .peek-gradient, .gridlines').forEach(function (el) { el.classList.add('in'); });
       }, 2000);
     });
   </script>
@@ -40,10 +40,19 @@
 </head>
 <body>
   <div class="page-frame history-page">
+    <!-- Decorative gridlines at the quarter marks: real elements (not frame
+         backgrounds) so they can be ruled in on load. Shared across home and
+         history, so the in-page transition never touches them. -->
+    <div class="gridlines" aria-hidden="true">
+      <span class="gridline gridline--1"></span>
+      <span class="gridline gridline--2"></span>
+      <span class="gridline gridline--3"></span>
+    </div>
+
     <!-- Name, illustration and peek match the homepage; the in-page transition
          keeps these nodes in place and only swaps the middle of the page. -->
     <div class="page-content">
-      <h1 class="display-name rv" style="--i:0">brendan<br>appeeee</h1>
+      <h1 class="display-name" aria-label="brendan appeeee"><span class="line rv">brendan </span><span class="line rv">app<span class="e rv">e</span><span class="e rv">e</span><span class="e rv">e</span><span class="e rv">e</span></span></h1>
     </div>
 
     <div class="illustration rv-fade" style="--i:1">

@@ -110,7 +110,7 @@ function positionTextColumns(illustrationContainer, textColumns) {
 }
 
 // Elements the on-load intro reveals (the head's inline failsafe uses the same list)
-var REVEAL_SELECTOR = '.rv, .rv-fade, .peek, .peek-gradient';
+var REVEAL_SELECTOR = '.rv, .rv-fade, .peek, .peek-gradient, .gridlines';
 
 // The intro waits for the body face, but never longer than this, so text
 // doesn't change typeface mid-animation.

@@ -79,7 +79,7 @@
       var rect = frame.getBoundingClientRect();
       var w = rect.width;
       var centerPx = w * 0.5;
-      /* Pin first gridline to 25% in pixels so it never moves (it fades via .page-transition-out::before) */
+      /* Pin first gridline to 25% in pixels so it never moves (it fades via .page-transition-out .gridline--1) */
       var line1Px = w * 0.25;
       frame.style.setProperty('--line-1', line1Px + 'px');
       var start = { l2: w * 0.5, l3: w * 0.75 };
@@ -226,7 +226,7 @@
      is warmed up at idle and on hover, and any remaining load runs in parallel
      with the fade-out, so there is no blank gap between the fade-out and the
      fade-in on a real network. */
-  var SHARED_SELECTOR = '.page-content, .illustration, .peek, .peek-gradient';
+  var SHARED_SELECTOR = '.gridlines, .page-content, .illustration, .peek, .peek-gradient';
 
   function isSharedNode(el) {
     return el.nodeType === 1 && el.matches(SHARED_SELECTOR);
