@@ -54,14 +54,18 @@ a:hover {
   transition-duration: var(--dur-1);
 }
 
-/* Page links (not article prose) get a hairline that rules in left to right
-   on hover or keyboard focus and leaves off to the right, in the same
-   ruled-line language as the gridlines and the history panel */
+/* Page links (not article prose) get a soft sage fill on hover or keyboard
+   focus, like a highlighter pass over the text and its icon. The fill is a
+   pseudo-element that bleeds past the link box, so nothing reflows. It
+   moves like the project rows' hover fill: in fast, out slowly, ease-out
+   both ways. It's a colour change, not movement, so it stays under reduced
+   motion. */
 .column a,
 .intro-text a,
 .lower-text a,
 .history-close {
   position: relative;
+  isolation: isolate;
 }
 
 .column a::after,
@@ -70,31 +74,36 @@ a:hover {
 .history-close::after {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.5;
+  /* Figma: 25px tall, centred on the 20px line, 2px past the text each
+     side. Inline links box only the 17px glyph run, so they reach 4px. */
+  inset: -4px -2px;
+  z-index: -1;
+  background: var(--color-link-highlight);
+  opacity: 0;
   pointer-events: none;
-  transform: scaleX(0);
-  transform-origin: 100% 50%;
-  transition: transform var(--dur-3) var(--ease-in-out);
+  transition: opacity var(--dur-3) var(--ease-out);
 }
 
-/* Links that end in an icon: the rule stops at the text */
-.archive-link::after,
-.history-link::after {
-  right: 16px;
+/* Icon links are inline-flex and already fill the 20px line */
+a.archive-link::after,
+a.history-link::after {
+  inset: -2px -2px -3px;
+}
+
+/* The fill carries the hover, so the text holds its colour */
+.column a:hover,
+.intro-text a:hover,
+.lower-text a:hover,
+.history-close:hover {
+  color: var(--color-link);
 }
 
 .column a:focus-visible::after,
 .intro-text a:focus-visible::after,
 .lower-text a:focus-visible::after,
 .history-close:focus-visible::after {
-  transform: none;
-  transform-origin: 0 50%;
-  transition: transform var(--dur-4) var(--ease-out-expo);
+  opacity: 1;
+  transition-duration: var(--dur-1);
 }
 
 @media (hover: hover) {
@@ -102,18 +111,8 @@ a:hover {
   .intro-text a:hover::after,
   .lower-text a:hover::after,
   .history-close:hover::after {
-    transform: none;
-    transform-origin: 0 50%;
-    transition: transform var(--dur-4) var(--ease-out-expo);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .column a::after,
-  .intro-text a::after,
-  .lower-text a::after,
-  .history-close::after {
-    transition: none !important;
+    opacity: 1;
+    transition-duration: var(--dur-1);
   }
 }
 
