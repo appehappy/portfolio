@@ -155,7 +155,8 @@
   flex-shrink: 0;
 }
 
-/* The outbound arrow says where it goes: a 1.5px nudge up and to the right */
+/* The outbound arrow says where it goes: a 1.5px nudge up and to the right,
+   in fast with the fill and back slowly */
 .archive-link .arrow-icon {
   transition: transform var(--dur-3) var(--ease-out);
 }
@@ -175,6 +176,7 @@
 @media (hover: hover) {
   .archive-link:hover .arrow-icon {
     transform: translate(1.5px, -1.5px);
+    transition-duration: var(--dur-1);
   }
 
   .history-link:hover .link-icon-rule {
