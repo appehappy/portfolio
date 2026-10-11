@@ -265,7 +265,7 @@
   width: var(--peek-expanded);
   height: var(--peek-expanded);
   overflow: hidden;
-  z-index: 5; /* open, it lies over everything on the page (Figma) */
+  z-index: 3; /* open, it lies over everything on the page (Figma) */
   cursor: pointer;
   clip-path: inset(0 0 calc(100% - var(--peek-collapsed)) calc(100% - var(--peek-collapsed)));
   /* clip-path = hover expand / pin (closing here); transform = on-load stamp
@@ -371,23 +371,6 @@
   }
 }
 
-/* Soft blue gradient strip down the right edge (Figma: 24px wide, from the
-   collapsed square's bottom down to 12px from the canvas bottom). The open
-   peek lies over it. */
-.peek-gradient {
-  position: absolute;
-  top: 36px; /* peek top (12px) + collapsed square (24px) */
-  bottom: 12px;
-  right: 12px;
-  width: 24px;
-  z-index: 4; /* above the columns, below the peek (z-index 5) */
-  pointer-events: none;
-  opacity: 0.24;
-  background: linear-gradient(180deg, #6878ad 0%, var(--color-bg-page) 100%);
-  /* On load it pours down out of the square (base.css) */
-  transition: clip-path var(--dur-8) var(--ease-draw) var(--d, 0s);
-}
-
 /* Align text columns to top of illustration */
 /* We need to calculate where the illustration top is and position text there */
 /* Using JavaScript would be ideal, but we can approximate with CSS */
@@ -422,8 +405,7 @@
   .page-content,
   .text-columns,
   .illustration,
-  .peek,
-  .peek-gradient {
+  .peek {
     display: none;
   }
   

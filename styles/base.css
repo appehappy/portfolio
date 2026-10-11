@@ -200,8 +200,7 @@ img {
   transform: none;
 }
 
-/* The peek square stamps in from its top-right corner; the gradient strip
-   then pours down out of it (its 0.24 opacity never changes) */
+/* The peek square stamps in from its top-right corner */
 .js .peek {
   transform: scale(0);
 }
@@ -210,22 +209,13 @@ img {
   transform: none;
 }
 
-.js .peek-gradient {
-  clip-path: inset(0 0 100% 0);
-}
-
-.js .peek-gradient.in {
-  clip-path: inset(0);
-}
-
 /* Desktop intro timeline ("ruled, set, placed, stamped"). Each beat starts
    once the one before it is visibly under way, so the order reads:
      0      gridlines rule down (to ~1.4s)
      280    the name sets, line by line, then the e's one by one
      620    the illustration is placed
      800    the columns, left to right
-     1350   the blue square stamps in, after a breath
-     1500   the gradient pours down out of it (to ~3.1s)
+     1350   the blue square stamps in, after a breath (to ~1.8s)
    Readable by ~1.5s. */
 .display-name {
   --rise: var(--rise-2);
@@ -242,7 +232,6 @@ img {
 .column-writing { --d: 900ms; }
 .column-soon { --d: 1000ms; }
 .peek { --d: 1350ms; }
-.peek-gradient { --d: 1500ms; }
 
 /* Mobile: the logo is the name */
 .logo {
@@ -270,11 +259,6 @@ img {
   transition-delay: 0s;
 }
 
-.js.intro-quick .peek-gradient {
-  transition-duration: var(--dur-5);
-  transition-delay: 0s;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .js .rv,
   .js .rv-fade {
@@ -288,25 +272,16 @@ img {
     transition: none;
   }
 
-  /* Peek and gradient fade instead of stamping and pouring (the peek keeps
-     its collapsed clip; with no clip transition it opens in one step) */
-  .js .peek,
-  .js .peek-gradient {
+  /* The peek fades instead of stamping (it keeps its collapsed clip; with
+     no clip transition it opens in one step) */
+  .js .peek {
     transform: none;
     opacity: 0;
     transition: opacity 0.2s !important;
   }
 
-  .js .peek-gradient {
-    clip-path: none;
-  }
-
   .js .peek.in {
     opacity: 1;
-  }
-
-  .js .peek-gradient.in {
-    opacity: 0.24;
   }
 }
 

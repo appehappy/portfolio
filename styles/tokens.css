@@ -51,7 +51,6 @@
   --dur-5: 640ms;  /* name recolour, peek open, hairline draw */
   --dur-6: 900ms;  /* entrance transforms, image mask reveal */
   --dur-7: 1200ms; /* gridline draw, illustration fade-in */
-  --dur-8: 1600ms; /* gradient pour (the intro's slow tail) */
 
   /* Motion — easing. Entrances decelerate, exits accelerate. */
   --ease-out: cubic-bezier(.22, 1, .36, 1);     /* default entrance */

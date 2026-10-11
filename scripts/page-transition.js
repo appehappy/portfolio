@@ -218,15 +218,15 @@
     });
   }
 
-  /* Home <-> project history. The gridlines, name, illustration, peek and
-     gradient are identical on both pages, so the frame and those nodes stay
+  /* Home <-> project history. The gridlines, name, illustration and peek
+     are identical on both pages, so the frame and those nodes stay
      put; only the rest of the frame's children are swapped. Nothing reloads,
      so the illustration never flashes.
 
      Everything the swap needs (the other page's HTML, history.css, history.js)
      is warmed up at idle and on hover, and any remaining load runs in parallel
      with the exit, so there is no blank gap on a real network. */
-  var SHARED_SELECTOR = '.gridlines, .page-content, .illustration, .peek, .peek-gradient';
+  var SHARED_SELECTOR = '.gridlines, .page-content, .illustration, .peek';
 
   function isSharedNode(el) {
     return el.nodeType === 1 && el.matches(SHARED_SELECTOR);
