@@ -117,9 +117,9 @@
   /* Gridline at 50% of page-frame width, text starts at 50% + 48px */
   left: calc(50% + 48px);
   width: auto;
-  /* "I do some writing & drawing" — one line on roomy desktops, but capped to
-     its gridline zone so it wraps instead of overlapping "Come back soon" when
-     the viewport is narrow. */
+  /* "I do some writing & drawing & collecting" — one line on roomy desktops,
+     but capped to its gridline zone so it wraps instead of overlapping "Come
+     back soon" when the viewport is narrow. */
   max-width: calc(25% - 16px);
 }
 
@@ -138,9 +138,10 @@
   margin-bottom: 0;
 }
 
-/* "write & draw" archive link with trailing arrow-up-right icon.
-   No gap: the arrow's 16x16 box has built-in left padding (the glyph is
-   inset), which provides the visual spacing from the text. */
+/* Archive link ("writing & drawing & collecting") with trailing
+   arrow-up-right icon. No gap: the arrow's 16x16 box has built-in left
+   padding (the glyph is inset), which provides the visual spacing from the
+   text. */
 .archive-link,
 .history-link {
   display: inline-flex;
@@ -246,13 +247,17 @@
 }
 
 /* Peek illustration — a masked square in the top-right that expands on hover.
-   The box is always the expanded size (the rightmost column, 25% of the
-   cream, minus 12px of padding on each side), anchored 12px from the canvas
-   edges; a clip-path shows only its top-right square until it opens. Clipping
-   instead of resizing means no layout per frame, and since hit-testing
-   follows the clip, the collapsed hover target is still just the square. */
+   The box is always the expanded size (the right half of the cream, from the
+   center gridline, minus 12px of padding on each side), anchored 12px from
+   the canvas edges; a clip-path shows only its top-right square until it
+   opens. Clipping instead of resizing means no layout per frame, and since
+   hit-testing follows the clip, the collapsed hover target is still just the
+   square. In a window too short for that square it stops 12px above the
+   cream's bottom instead: the clip hides the box but it still counts toward
+   the page's scroll size, so it must never hang past the frame. */
 .peek {
-  --peek-expanded: calc((100vw - var(--border-width) * 2) / 4 - 24px);
+  --peek-expanded: min((100vw - var(--border-width) * 2) / 2 - 24px,
+                       100vh - var(--border-width) * 2 - 24px);
   --peek-collapsed: 24px;
   position: absolute;
   top: 12px;
@@ -260,7 +265,7 @@
   width: var(--peek-expanded);
   height: var(--peek-expanded);
   overflow: hidden;
-  z-index: 3;
+  z-index: 3; /* open, it lies over everything on the page (Figma) */
   cursor: pointer;
   clip-path: inset(0 0 calc(100% - var(--peek-collapsed)) calc(100% - var(--peek-collapsed)));
   /* clip-path = hover expand / pin (closing here); transform = on-load stamp
@@ -296,6 +301,25 @@
 
 .peek.is-pinned::after {
   opacity: 1;
+}
+
+/* Pinned, the no-background layer needs a ground of its own, or the columns
+   it now reaches would show through the drawing. It comes on at once (the
+   blue is still opaque while the layers cross-fade) and leaves only once the
+   blue has faded back in. */
+.peek::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--color-bg-page);
+  opacity: 0;
+  transition: opacity 0s linear var(--dur-3);
+}
+
+.peek.is-pinned::before {
+  opacity: 1;
+  transition: none;
 }
 
 /* Both illustration layers fill the box (object-contain), anchored to its
@@ -347,23 +371,6 @@
   }
 }
 
-/* Soft blue gradient strip down the right edge, sitting atop the peek
-   illustration in all three states (Figma: 24px wide, from the collapsed
-   square's bottom down to 12px from the canvas bottom). */
-.peek-gradient {
-  position: absolute;
-  top: 36px; /* peek top (12px) + collapsed square (24px) */
-  bottom: 12px;
-  right: 12px;
-  width: 24px;
-  z-index: 4; /* above the peek illustration (z-index 3) */
-  pointer-events: none;
-  opacity: 0.24;
-  background: linear-gradient(180deg, #6878ad 0%, var(--color-bg-page) 100%);
-  /* On load it pours down out of the square (base.css) */
-  transition: clip-path var(--dur-8) var(--ease-draw) var(--d, 0s);
-}
-
 /* Align text columns to top of illustration */
 /* We need to calculate where the illustration top is and position text there */
 /* Using JavaScript would be ideal, but we can approximate with CSS */
@@ -398,8 +405,7 @@
   .page-content,
   .text-columns,
   .illustration,
-  .peek,
-  .peek-gradient {
+  .peek {
     display: none;
   }
   
